@@ -38,9 +38,13 @@ extern void *map_get(map_t *map, const char *key);
 
 extern void *map_remove(map_t *map, const char *key);
 
-static struct map_element_s *map_element_create(const char* key, void* data);
+extern int map_size(map_t *map);
+
+static struct map_element_s *map_element_create(const char *key, void *data);
 
 static void map_element_free(struct map_element_s *element);
+
+static void map_elements_free(struct map_element_s *element);
 
 
 #endif //LIBRARY_MAP_H

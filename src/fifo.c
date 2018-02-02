@@ -110,11 +110,9 @@ void *fifo_remove(fifo_t *fifo) {
 
 int fifo_size(fifo_t *fifo) {
 
-    int size;
-
     pthread_mutex_lock(&fifo->mutex);
 
-    size = (int) fifo->size;
+    int size = (int) fifo->size;
 
     pthread_mutex_unlock(&fifo->mutex);
 
