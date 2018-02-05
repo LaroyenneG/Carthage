@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+
 #include "map.h"
 
 
@@ -137,12 +138,18 @@ void *map_remove(map_t *map, const char *key) {
     struct map_element_s *select = map->root;
 
     if (strcmp(select->key, key) == 0) {
+
         data = select->data;
         select = select->next;
         map_elements_free(select);
+        map->size--;
+
     } else {
+
         while (select->next != NULL) {
+
             if (strcmp(select->next->key, key) == 0) {
+
                 data = select->next->data;
 
                 map_elements_free(select->next);
@@ -195,7 +202,9 @@ bool map_contains_key(map_t *map, const char *key) {
     struct map_element_s *select;
 
     for (select = map->root; select != NULL; select = select->next) {
+
         if (strcmp(select->key, key) == 0) {
+
             pthread_mutex_unlock(&map->mutex);
             return true;
         }
@@ -214,7 +223,9 @@ bool map_contains_value(map_t *map, void *data) {
     struct map_element_s *select;
 
     for (select = map->root; select != NULL; select = select->next) {
+
         if (select->data == data) {
+
             pthread_mutex_unlock(&map->mutex);
             return true;
         }

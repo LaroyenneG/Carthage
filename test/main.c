@@ -14,6 +14,7 @@
 #include "../src/thread_lib.h"
 #include "../src/log.h"
 #include "../src/scanner.h"
+#include "../src/map.h"
 
 
 #define TAB_ADDR_LEN 40000
@@ -297,6 +298,7 @@ void test_vector_with_threads() {
 
 static bool b;
 
+
 void *thread_test_time_out(void *args) {
 
     sleep(5);
@@ -356,6 +358,32 @@ void test_scanner() {
 }
 
 
+void test_map_with_threads() {
+
+    map_t *map = map_create();
+
+
+    map_free(map);
+}
+
+void test_map() {
+
+    map_t *map = map_create();
+
+    assert(map_size(map) == 0);
+
+    map_put(map, "aaa", NULL);
+
+    assert(map_size(map) == 1);
+
+    map_remove(map, "aaa");
+
+    assert(map_size(map) == 0);
+
+    map_free(map);
+}
+
+
 int main(int argc, char **argv) {
 
     if (argc != 1) {
@@ -363,7 +391,7 @@ int main(int argc, char **argv) {
     }
 
 
-    pid_t pids[5];
+    pid_t pids[6];
 
     for (int j = 0; j < sizeof(pids) / sizeof(pid_t); ++j) {
 
@@ -399,6 +427,10 @@ int main(int argc, char **argv) {
                     test_scanner();
                     break;
 
+                case 5:
+                    test_map();
+                    test_map_with_threads();
+
                 default:
                     printf("Oups\n");
                     break;
@@ -426,3 +458,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
