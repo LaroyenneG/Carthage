@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 31/12/17.
+// Created by Guillaume LAROYENNE on 31/12/17.
 //
 
 #include <stdio.h>
@@ -388,25 +388,31 @@ void test_map() {
 
     assert(map_size(map) == 1);
 
-    void *datas[10];
+    int datas[10];
 
 
-    for (int i = 0; i < sizeof(datas) / sizeof(void *); ++i) {
+    for (int i = 0; i < sizeof(datas) / sizeof(int); ++i) {
         char string[100];
         sprintf(string, "%d", i);
-        map_put(map, string, datas[i]);
+        map_put(map, string, &datas[i]);
     }
 
-    assert(map_size(map) == sizeof(datas) / sizeof(void *) + 1);
 
-    assert(map_contains_value(map, datas[0]));
-    assert(map_contains_value(map, NULL));
+    assert(map_size(map) == sizeof(datas) / sizeof(int) + 1);
+
+    assert(map_contains_value(map, &datas[0]));
+    assert(!map_contains_value(map, NULL));
     assert(!map_contains_value(map, (void *) 11566498498));
     assert(!map_contains_key(map, ",rgerkig"));
     assert(map_contains_key(map, "1"));
     assert(map_contains_key(map, "2"));
 
-    for (int i = 0; i < sizeof(datas) / sizeof(void *); ++i) {
+    assert(map_get(map, "2") == &datas[2]);
+    assert(map_get(map, "bbb") == (void *) 2);
+    assert(map_get(map, "babylouba") == NULL);
+
+
+    for (int i = 0; i < sizeof(datas) / sizeof(int); ++i) {
         char string[100];
         sprintf(string, "%d", i);
         map_remove(map, string);
@@ -481,13 +487,11 @@ int main(int argc, char **argv) {
     for (int i = 0; i < sizeof(pids) / sizeof(pid_t); ++i) {
         int status;
         waitpid(pids[i], &status, 0);
+        char string[100];
+        sprintf(string, "Test %d", i);
         if (status != EXIT_SUCCESS) {
-            char string[100];
-            sprintf(string, "Test %d invalide", i);
             print_failed(string);
         } else {
-            char string[100];
-            sprintf(string, "Test %d valide", i);
             print_success(string);
         }
     }

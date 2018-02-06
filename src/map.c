@@ -21,13 +21,13 @@ void map_element_free(struct map_element_s *element) {
 }
 
 
-void map_elements_free(struct map_element_s *element) {
+void map_all_elements_free(struct map_element_s *element) {
 
     if (element == NULL) {
         return;
     }
 
-    map_elements_free(element->next);
+    map_all_elements_free(element->next);
 
     map_element_free(element);
 }
@@ -142,14 +142,15 @@ void *map_remove(map_t *map, const char *key) {
     if (strcmp(select->key, key) == 0) {
         data = select->data;
         map->root = select->next;
-        map_elements_free(select);
+        map_all_elements_free(select);
         map->size--;
     } else {
         while (select->next != NULL) {
             if (strcmp(select->next->key, key) == 0) {
                 data = select->next->data;
-                map_elements_free(select->next);
-                select->next = select->next->next;
+                struct map_element_s *tmp = select->next->next;
+                map_element_free(select->next);
+                select->next = tmp;
                 map->size--;
                 break;
             } else {
@@ -170,7 +171,7 @@ void map_free(map_t *map) {
         return;
     }
 
-    map_elements_free(map->root);
+    map_all_elements_free(map->root);
 
     pthread_mutex_destroy(&map->mutex);
 
@@ -188,6 +189,7 @@ int map_size(map_t *map) {
 
     return size;
 }
+
 
 bool map_contains_key(map_t *map, const char *key) {
 
@@ -228,4 +230,15 @@ bool map_contains_value(map_t *map, void *data) {
     pthread_mutex_unlock(&map->mutex);
 
     return false;
+}
+
+
+void map_print(map_t *map) {
+    struct map_element_s *select;
+
+    printf("Map : [");
+    for (select = map->root; select != NULL; select = select->next) {
+        printf(" ('%s', %p) ", select->key, select->data);
+    }
+    printf("]\n");
 }
