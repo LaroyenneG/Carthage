@@ -53,6 +53,7 @@ struct map_element_s *map_element_create(const char *key, void *data) {
     strcpy(element_s->key, key);
 
     element_s->data = data;
+    element_s->next = NULL;
 
     return element_s;
 }
@@ -125,6 +126,7 @@ void *map_get(map_t *map, const char *key) {
     return data;
 }
 
+
 void *map_remove(map_t *map, const char *key) {
 
     if (map_size(map) <= 0) {
@@ -138,26 +140,18 @@ void *map_remove(map_t *map, const char *key) {
     struct map_element_s *select = map->root;
 
     if (strcmp(select->key, key) == 0) {
-
         data = select->data;
-        select = select->next;
+        map->root = select->next;
         map_elements_free(select);
         map->size--;
-
     } else {
-
         while (select->next != NULL) {
-
             if (strcmp(select->next->key, key) == 0) {
-
                 data = select->next->data;
-
                 map_elements_free(select->next);
-
                 select->next = select->next->next;
-
-                select = NULL;
                 map->size--;
+                break;
             } else {
                 select = select->next;
             }

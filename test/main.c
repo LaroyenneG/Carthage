@@ -345,6 +345,8 @@ void test_time_out() {
 
 void test_scanner() {
 
+    return;
+
     FILE *file = fopen("doc.txt", "r");
 
     assert(file != NULL);
@@ -380,6 +382,38 @@ void test_map() {
 
     assert(map_size(map) == 0);
 
+    for (int i = 0; i < 3; ++i) {
+        map_put(map, "bbb", (void *) i);
+    }
+
+    assert(map_size(map) == 1);
+
+    void *datas[10];
+
+
+    for (int i = 0; i < sizeof(datas) / sizeof(void *); ++i) {
+        char string[100];
+        sprintf(string, "%d", i);
+        map_put(map, string, datas[i]);
+    }
+
+    assert(map_size(map) == sizeof(datas) / sizeof(void *) + 1);
+
+    assert(map_contains_value(map, datas[0]));
+    assert(map_contains_value(map, NULL));
+    assert(!map_contains_value(map, (void *) 11566498498));
+    assert(!map_contains_key(map, ",rgerkig"));
+    assert(map_contains_key(map, "1"));
+    assert(map_contains_key(map, "2"));
+
+    for (int i = 0; i < sizeof(datas) / sizeof(void *); ++i) {
+        char string[100];
+        sprintf(string, "%d", i);
+        map_remove(map, string);
+    }
+
+    assert(map_size(map) == 1);
+
     map_free(map);
 }
 
@@ -402,6 +436,7 @@ int main(int argc, char **argv) {
         }
 
         if (pids[j] == 0) {
+
             switch (j) {
 
                 case 0:
@@ -430,6 +465,7 @@ int main(int argc, char **argv) {
                 case 5:
                     test_map();
                     test_map_with_threads();
+                    break;
 
                 default:
                     printf("Oups\n");
