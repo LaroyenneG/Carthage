@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 01/01/18.
+// Created by Guillaume LAROYENNE on 01/01/18.
 //
 
 #include <stdlib.h>
@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "debug.h"
+
 
 static bool debug = true;
 

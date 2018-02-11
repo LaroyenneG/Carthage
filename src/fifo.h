@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 20/12/17.
+// Created by Guillaume LAROYENNE on 20/12/17.
 //
 
 #ifndef LIB_FIFO_H

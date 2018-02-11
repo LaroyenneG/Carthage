@@ -1,6 +1,7 @@
 //
-// Created by guillaume on 20/12/17.
+// Created by Guillaume LAROYENNE on 20/12/17.
 //
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>

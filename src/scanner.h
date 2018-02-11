@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 26/01/18.
+// Created by Guillaume LAROYENNE on 26/01/18.
 //
 
 #ifndef LIBRARY_SCANNER_H
