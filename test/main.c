@@ -360,10 +360,53 @@ void test_scanner() {
 }
 
 
+void *thread_test_map(void *args) {
+
+    args_threads_t *args_threads = args;
+
+    map_t *map = args_threads->argv[0];
+
+    void *data[100000];
+
+    for (int i = 0; i < sizeof(data) / sizeof(void *); ++i) {
+
+        char key[100];
+        sprintf(key, "%d", i + 50000);
+
+        map_put(map, key, data[i]);
+    }
+
+    pthread_exit(NULL);
+}
+
+
 void test_map_with_threads() {
 
     map_t *map = map_create();
 
+    args_threads_t *args_threads = args_threads_create();
+    args_threads->argv[0] = map;
+
+    pthread_t pthread;
+    pthread_create(&pthread, NULL, thread_test_map, args_threads);
+
+    void *data[100000];
+
+    for (int i = 0; i < sizeof(data) / sizeof(void *); ++i) {
+
+        char key[100];
+        sprintf(key, "%d", i);
+
+        map_put(map, key, data[i]);
+    }
+
+    assert(map_size(map) >= sizeof(data) / sizeof(void *));
+
+
+    pthread_join(pthread, NULL);
+
+
+    assert(map_size(map) == sizeof(data) / sizeof(void *) * 2);
 
     map_free(map);
 }
