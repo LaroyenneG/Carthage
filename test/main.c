@@ -17,7 +17,7 @@
 #include "../src/map.h"
 
 
-#define TAB_ADDR_LEN 100000
+#define TAB_ADDR_LEN 20000
 
 /*
  * Test all Library
@@ -26,6 +26,7 @@
 fifo_t *globalFifo;
 list_t *globalList;
 vector_t *globalVector;
+map_t* globalMap;
 
 
 void test_fifo() {
@@ -364,10 +365,6 @@ void *thread_test_map(void *args) {
 
     static int p = TAB_ADDR_LEN;
 
-    args_threads_t *args_threads = args;
-
-    map_t *map = args_threads->argv[0];
-
     void *data[TAB_ADDR_LEN];
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i, ++p) {
@@ -375,10 +372,10 @@ void *thread_test_map(void *args) {
         char key[500];
         sprintf(key, "%d", p);
 
-        map_put(map, key, data[i]);
+        map_put(globalMap, key, data[i]);
 
-        assert(map_contains_key(map, key));
-        assert(map_contains_value(map, data[i]));
+        assert(map_contains_key(globalMap, key));
+        assert(map_contains_value(globalMap, data[i]));
     }
 
     pthread_exit(NULL);
@@ -387,14 +384,10 @@ void *thread_test_map(void *args) {
 
 void test_map_with_threads() {
 
-    map_t *map = map_create();
-
-    args_threads_t *args_threads = args_threads_create();
-    args_threads->argv[0] = map;
-    args_threads->argc = 0;
+    globalMap = map_create();
 
     pthread_t pthread;
-    pthread_create(&pthread, NULL, thread_test_map, args_threads);
+    pthread_create(&pthread, NULL, thread_test_map, NULL);
 
     void *data[TAB_ADDR_LEN];
 
@@ -403,30 +396,30 @@ void test_map_with_threads() {
         char key[100];
         sprintf(key, "%d", i);
 
-        map_put(map, key, data[i]);
+        map_put(globalMap, key, data[i]);
     }
 
-    assert(map_size(map) >= TAB_ADDR_LEN);
+    assert(map_size(globalMap) >= TAB_ADDR_LEN);
 
     pthread_join(pthread, NULL);
 
-    assert(map_size(map) == TAB_ADDR_LEN * 2);
+    assert(map_size(globalMap) == TAB_ADDR_LEN * 2);
 
 
-    pthread_create(&pthread, NULL, thread_test_map, args_threads);
+    pthread_create(&pthread, NULL, thread_test_map, NULL);
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
         char key[300];
         sprintf(key, "%d", i);
-        map_remove(map, key);
+        map_remove(globalMap, key);
     }
 
     pthread_join(pthread, NULL);
 
 
-    assert(map_size(map) == TAB_ADDR_LEN * 2);
+    assert(map_size(globalMap) == TAB_ADDR_LEN * 2);
 
-    map_free(map);
+    map_free(globalMap);
 }
 
 void test_map() {
@@ -449,26 +442,26 @@ void test_map() {
 
     assert(map_size(map) == 1);
 
-    int datas[TAB_ADDR_LEN];
+    int data[TAB_ADDR_LEN];
 
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
         char string[100];
         sprintf(string, "%d", i);
-        map_put(map, string, &datas[i]);
+        map_put(map, string, &data[i]);
     }
 
 
     assert(map_size(map) == TAB_ADDR_LEN + 1);
 
-    assert(map_contains_value(map, &datas[0]));
+    assert(map_contains_value(map, &data[0]));
     assert(!map_contains_value(map, NULL));
     assert(!map_contains_value(map, (void *) 11566498498));
     assert(!map_contains_key(map, ",rgerkig"));
     assert(map_contains_key(map, "1"));
     assert(map_contains_key(map, "2"));
 
-    assert(map_get(map, "2") == &datas[2]);
+    assert(map_get(map, "2") == &data[2]);
     assert(map_get(map, "bbb") == (void *) 2);
     assert(map_get(map, "babylouba") == NULL);
 
