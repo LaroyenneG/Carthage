@@ -10,6 +10,26 @@
 #include "map.h"
 
 
+int randint(int low, int high) {
+    unsigned long seed_time = 0;
+    unsigned long seed_count = 0;
+
+    seed_time = (unsigned long) time(NULL);
+    seed_count = 0;
+
+    ++seed_count;
+
+
+    srand((unsigned int) seed_time);
+    while (--seed_count > 0) rand();
+    double v = (double) rand();
+    v *= (double) (high - low + 1);
+    v /= (double) RAND_MAX;
+    v += (double) low;
+    return (int) v;
+}
+
+
 void map_element_free(struct map_element_s *element) {
 
     if (element == NULL) {
@@ -240,6 +260,31 @@ void map_clear(map_t *map) {
     while ((elementKey = map_first_key(map)) != NULL) {
         map_remove(map, elementKey);
     }
+}
+
+
+char *map_random_key(map_t *map) {
+
+    int n;
+
+    if ((n = map_size(map)) == 0) {
+        return NULL;
+    }
+
+    pthread_mutex_lock(&map->mutex);
+
+    int rand = randint(0, n);
+
+    struct map_element_s *select = map->root;
+
+    for (int i = 0; i < rand; ++i) {
+        select = select->next;
+    }
+
+    pthread_mutex_unlock(&map->mutex);
+
+
+    return select->key;
 }
 
 

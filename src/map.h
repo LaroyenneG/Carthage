@@ -42,15 +42,20 @@ extern int map_size(map_t *map);
 
 extern void map_print(map_t *map);
 
-extern void map_clear(map_t* map);
+extern void map_clear(map_t *map);
 
-extern char* map_first_key(map_t* map);
+extern char * map_random_key(map_t* map);
+
+
+static char *map_first_key(map_t *map);
 
 static struct map_element_s *map_element_create(const char *key, void *data);
 
 static void map_element_free(struct map_element_s *element);
 
 static void map_all_elements_free(struct map_element_s *element);
+
+static static int randint(int low, int high);
 
 
 #endif //LIBRARY_MAP_H
