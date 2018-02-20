@@ -233,6 +233,31 @@ bool map_contains_value(map_t *map, void *data) {
 }
 
 
+void map_clear(map_t *map) {
+
+    char *elementKey;
+
+    while ((elementKey = map_first_key(map)) != NULL) {
+        map_remove(map, elementKey);
+    }
+}
+
+
+char *map_first_key(map_t *map) {
+
+    if (map_size(map) == 0) {
+        return NULL;
+    }
+
+    pthread_mutex_lock(&map->mutex);
+
+    char *key = map->root->key;
+
+    pthread_mutex_unlock(&map->mutex);
+
+    return key;
+}
+
 void map_print(map_t *map) {
     struct map_element_s *select;
 
