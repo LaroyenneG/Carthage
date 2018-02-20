@@ -55,7 +55,7 @@ static void map_element_free(struct map_element_s *element);
 
 static void map_all_elements_free(struct map_element_s *element);
 
-static static int randint(int low, int high);
+static int randint(int low, int high);
 
 
 #endif //LIBRARY_MAP_H
