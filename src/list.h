@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 30/12/17.
+// Created by Guillaume LAROYENNE on 30/12/17.
 //
 
 #ifndef LIB_LIST_H

@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 31/12/17.
+// Created by Guillaume LAROYENNE on 31/12/17.
 //
 
 #ifndef LIB_THREAD_ARGS_H
