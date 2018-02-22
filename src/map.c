@@ -303,6 +303,30 @@ char *map_first_key(map_t *map) {
     return key;
 }
 
+
+char *map_find(map_t *map, bool (*function)(void *, void *), void *elt) {
+
+
+    pthread_mutex_lock(&map->mutex);
+
+    struct map_element_s *select;
+
+    for (select = map->root; select != NULL; select = select->next) {
+
+        if (function(elt, select->data)) {
+
+            pthread_mutex_unlock(&map->mutex);
+
+            return select->key;
+        }
+    }
+
+    pthread_mutex_unlock(&map->mutex);
+
+    return NULL;
+}
+
+
 void map_print(map_t *map) {
     struct map_element_s *select;
 

@@ -127,6 +127,9 @@ void map_clear(map_t *map);
 
 char *map_random_key(map_t *map);
 
+char *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
+
+
 /*
  * Sublime terminal
  */

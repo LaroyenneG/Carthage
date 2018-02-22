@@ -44,7 +44,9 @@ extern void map_print(map_t *map);
 
 extern void map_clear(map_t *map);
 
-extern char * map_random_key(map_t* map);
+extern char *map_random_key(map_t *map);
+
+extern char *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
 
 
 static char *map_first_key(map_t *map);
