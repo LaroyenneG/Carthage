@@ -115,7 +115,8 @@ int sscanner_get(const char *string, char a, char b, char *result) {
                 i++;
                 n++;
             }
-
+            result[count] = '\0';
+            break;
         }
 
     }
