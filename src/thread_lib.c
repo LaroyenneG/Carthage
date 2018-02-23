@@ -32,7 +32,7 @@ void *thread_time_out(void *args) {
     pthread_exit(NULL);
 }
 
-args_threads_t *args_threads_create() {
+args_threads_t *args_threads_create(size_t n) {
 
     args_threads_t *args_threads = malloc(sizeof(args_threads_t));
     if (args_threads == NULL) {
@@ -40,14 +40,24 @@ args_threads_t *args_threads_create() {
         exit(EXIT_FAILURE);
     }
 
+    args_threads->argv = malloc(sizeof(void *) * n);
+    if (args_threads->argv == NULL) {
+        perror("malloc()");
+        exit(EXIT_FAILURE);
+    }
+
+    args_threads->argc = (int) n;
+
     return args_threads;
 }
 
 void args_threads_free(args_threads_t *args_threads) {
 
-    for (int i = 0; i < args_threads->argc; ++i) {
-        free(args_threads->argv[i]);
+    if (args_threads == NULL) {
+        return;
     }
+
+    free(args_threads->argv);
 
     free(args_threads);
 }
@@ -70,7 +80,7 @@ int time_out(pthread_t thread, unsigned int time, bool wait) {
 
     *pTime = time;
 
-    args_threads_t *args_threads = args_threads_create();
+    args_threads_t *args_threads = args_threads_create(0);
 
     pthread_t *t = malloc(sizeof(pthread_t));
     if (t == NULL) {

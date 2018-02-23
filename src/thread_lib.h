@@ -9,13 +9,13 @@
 
 typedef struct {
 
-    void *argv[10];
+    void **argv;
     int argc;
 
 } args_threads_t;
 
 
-extern args_threads_t *args_threads_create();
+extern args_threads_t *args_threads_create(size_t n);
 
 extern int time_out(pthread_t thread, unsigned int time, bool wait);
 
