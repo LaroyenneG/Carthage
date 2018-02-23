@@ -8,26 +8,7 @@
 #include <pthread.h>
 
 #include "map.h"
-
-
-int randint(int low, int high) {
-    unsigned long seed_time = 0;
-    unsigned long seed_count = 0;
-
-    seed_time = (unsigned long) time(NULL);
-    seed_count = 0;
-
-    ++seed_count;
-
-
-    srand((unsigned int) seed_time);
-    while (--seed_count > 0) rand();
-    double v = (double) rand();
-    v *= (double) (high - low + 1);
-    v /= (double) RAND_MAX;
-    v += (double) low;
-    return (int) v;
-}
+#include "scanner.h"
 
 
 void map_element_free(struct map_element_s *element) {
@@ -273,7 +254,7 @@ char *map_random_key(map_t *map) {
 
     pthread_mutex_lock(&map->mutex);
 
-    int rand = randint(0, n);
+    int rand = randint(0, n-1);
 
     struct map_element_s *select = map->root;
 

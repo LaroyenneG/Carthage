@@ -3,7 +3,32 @@
 //
 
 #include <string.h>
+#include <tkPort.h>
 #include "scanner.h"
+
+int randint(int low, int high) {
+
+
+    static int first = 0;
+    if (first == 0) {
+        srand(time(NULL));
+        first = 1;
+    }
+
+
+    unsigned long seed_count = 0;
+
+    seed_count = 0;
+
+    ++seed_count;
+
+    while (--seed_count > 0) rand();
+    double v = (double) rand();
+    v *= (double) (high - low + 1);
+    v /= (double) RAND_MAX;
+    v += (double) low;
+    return (int) v;
+}
 
 
 int scanner_next_line(FILE *file, char *string) {

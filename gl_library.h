@@ -79,6 +79,8 @@ void list_clear(list_t *list);
 
 bool list_contains(list_t *list, void *data);
 
+void *list_random_get(list_t* list);
+
 /*
  * Log
  */

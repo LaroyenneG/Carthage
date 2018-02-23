@@ -347,23 +347,28 @@ void test_time_out() {
 
 void test_scanner() {
 
-    assert(sscanner_contains("tototatiti","toto"));
+    assert(sscanner_contains("tototatiti", "toto"));
 
-    assert(!sscanner_contains("tototatiti","toty"));
+    assert(!sscanner_contains("tototatiti", "toty"));
 
-    assert(sscanner_contains("tototgatitig","g"));
+    assert(sscanner_contains("tototgatitig", "g"));
 
-    assert(!sscanner_contains("t","toto"));
+    assert(!sscanner_contains("t", "toto"));
 
-    assert(sscanner_contains("tototatiti fedfe guigui jfvnbiearb","guigui"));
+    assert(sscanner_contains("tototatiti fedfe guigui jfvnbiearb", "guigui"));
 
     char string[] = "siugifiurgf zerfggruigf [zeyfuigvezyufgv] eyzgfuyzegzef";
 
 
-    sscanner_cut(string,'[',']');
+    sscanner_cut(string, '[', ']');
 
 
-    assert(strcmp(string,"siugifiurgf zerfggruigf  eyzgfuyzegzef")==0);
+    assert(strcmp(string, "siugifiurgf zerfggruigf  eyzgfuyzegzef") == 0);
+
+    for (int i = 0; i < 1000; ++i) {
+        assert(randint(0, 10) <= 10);
+        assert(randint(0, 10) >= 0);
+    }
 }
 
 
@@ -455,6 +460,7 @@ void test_map() {
         char string[100];
         sprintf(string, "%d", i);
         map_put(map, string, &data[i]);
+        assert(map_random_key(map) != NULL);
     }
 
 

@@ -24,6 +24,8 @@ extern void list_free(list_t *list);
 
 extern void *list_get(list_t *list, unsigned int i);
 
+extern void *list_random_get(list_t* list);
+
 extern void list_add(list_t *list, void *data);
 
 extern void *list_remove(list_t *list, unsigned int i);

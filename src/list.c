@@ -8,6 +8,7 @@
 #include <stdbool.h>
 
 #include "list.h"
+#include "scanner.h"
 
 struct s_celt {
 
@@ -16,7 +17,7 @@ struct s_celt {
 
 };
 
-static struct s_celt *celt_create(void *data) {
+struct s_celt *celt_create(void *data) {
 
     struct s_celt *celt = malloc(sizeof(struct s_celt));
     if (celt == NULL) {
@@ -31,7 +32,7 @@ static struct s_celt *celt_create(void *data) {
 }
 
 
-static struct s_celt *celt_prepend(struct s_celt *old, void *data) {
+struct s_celt *celt_prepend(struct s_celt *old, void *data) {
 
     struct s_celt *celt = celt_create(data);
 
@@ -41,7 +42,7 @@ static struct s_celt *celt_prepend(struct s_celt *old, void *data) {
 }
 
 
-static struct s_celt *celt_append(struct s_celt *celt, void *data) {
+struct s_celt *celt_append(struct s_celt *celt, void *data) {
 
     struct s_celt **pCelt = &celt;
 
@@ -55,7 +56,7 @@ static struct s_celt *celt_append(struct s_celt *celt, void *data) {
 }
 
 
-static struct s_celt *celt_remove_first(struct s_celt *celt) {
+struct s_celt *celt_remove_first(struct s_celt *celt) {
 
     struct s_celt *first = celt;
     celt = celt->next;
@@ -65,7 +66,7 @@ static struct s_celt *celt_remove_first(struct s_celt *celt) {
 }
 
 
-static void celt_free(struct s_celt *celt) {
+void celt_free(struct s_celt *celt) {
 
     while (celt != NULL) {
         celt = celt_remove_first(celt);
@@ -73,7 +74,7 @@ static void celt_free(struct s_celt *celt) {
 }
 
 
-static size_t celt_length(struct s_celt *celt) {
+size_t celt_length(struct s_celt *celt) {
 
     size_t length = 0;
     while (celt) {
@@ -289,4 +290,13 @@ bool list_contains(list_t *list, void *data) {
     pthread_mutex_unlock(&list->mutex);
 
     return false;
+}
+
+void *list_random_get(list_t *list) {
+
+    if (list_size(list) <= 0) {
+        return NULL;
+    }
+
+    return list_get(list, (unsigned int) randint(0, list_size(list)-1));
 }

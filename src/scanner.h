@@ -17,4 +17,7 @@ extern int sscanner_cut(char *string, char a, char b);
 
 extern int sscanner_get(const char *string, char a, char b, char *result);
 
+
+extern int randint(int low, int high);
+
 #endif //LIBRARY_SCANNER_H
