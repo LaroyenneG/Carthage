@@ -44,3 +44,54 @@ bool sscanner_contains(const char *string, const char *substring) {
 
     return false;
 }
+
+
+int sscanner_cut(char *string, char a, char b) {
+
+    size_t size = strlen(string);
+
+
+    int n = 0;
+
+    for (int i = 0; i < size; ++i) {
+
+        bool cut = false;
+        if (string[i] == a) {
+            for (int j = i + 1; j < size; ++j) {
+                if (string[j] == b) {
+                    cut = true;
+                    break;
+                }
+            }
+        }
+
+        if (cut) {
+            int k = i;
+            while (string[k] != b) {
+                string[k] = '\0';
+                k++;
+            }
+            string[k] = '\0';
+        }
+    }
+
+    bool canWrite = false;
+
+    for (int cRead = 0, cWrite = 0; cRead < size; ++cRead) {
+
+        if (!canWrite && string[cWrite] != '\0') {
+            cRead++;
+            cWrite++;
+        } else {
+            canWrite = true;
+        }
+
+        if (canWrite && string[cRead] != '\0') {
+            string[cWrite] = string[cRead];
+            cWrite++;
+        }
+    }
+
+
+    return n;
+}

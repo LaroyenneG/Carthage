@@ -233,5 +233,6 @@ bool sscanner_contains(const char *string, const char *substring);
 
 int scanner_next_line(FILE *file, char *string);
 
+int sscanner_cut(char* string, char a, char b);
 
 #endif //GL_LIBRARY_GL_LIBRARY_H
