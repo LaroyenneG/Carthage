@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <zconf.h>
 #include <wait.h>
+#include <memory.h>
 
 #include "../src/fifo.h"
 #include "../src/list.h"
@@ -26,7 +27,7 @@
 fifo_t *globalFifo;
 list_t *globalList;
 vector_t *globalVector;
-map_t* globalMap;
+map_t *globalMap;
 
 
 void test_fifo() {
@@ -346,18 +347,23 @@ void test_time_out() {
 
 void test_scanner() {
 
-    return;
+    assert(sscanner_contains("tototatiti","toto"));
 
-    FILE *file = fopen("doc.txt", "r");
+    assert(!sscanner_contains("tototatiti","toty"));
 
-    assert(file != NULL);
+    assert(sscanner_contains("tototgatitig","g"));
+
+    assert(!sscanner_contains("t","toto"));
+
+    assert(sscanner_contains("tototatiti fedfe guigui jfvnbiearb","guigui"));
+
+    char string[] = "siugifiurgf zerfggruigf [zeyfuigvezyufgv] eyzgfuyzegzef";
 
 
-    char string[100];
+    sscanner_cut(string,'[',']');
 
-    scanner_next_line(file, string);
 
-    assert(fclose(file) >= 0);
+    assert(strcmp(string,"siugifiurgf zerfggruigf  eyzgfuyzegzef")==0);
 }
 
 

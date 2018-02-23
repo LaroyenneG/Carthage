@@ -22,6 +22,7 @@ add_library(gl_library
         src/thread_lib.c
         src/thread_lib.h
         src/vector.c
-        src/vector.h gl_library.h)
+        src/vector.h
+        gl_library.h)
 
 target_link_libraries(gl_library pthread)

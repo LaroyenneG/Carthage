@@ -80,7 +80,6 @@ int sscanner_cut(char *string, char a, char b) {
     for (int cRead = 0, cWrite = 0; cRead < size; ++cRead) {
 
         if (!canWrite && string[cWrite] != '\0') {
-            cRead++;
             cWrite++;
         } else {
             canWrite = true;
