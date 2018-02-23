@@ -235,4 +235,6 @@ int scanner_next_line(FILE *file, char *string);
 
 int sscanner_cut(char* string, char a, char b);
 
+int sscanner_get(const char *string, char a, char b, char *result);
+
 #endif //GL_LIBRARY_GL_LIBRARY_H

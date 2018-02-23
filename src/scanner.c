@@ -81,6 +81,7 @@ int sscanner_cut(char *string, char a, char b) {
 
         if (!canWrite && string[cWrite] != '\0') {
             cWrite++;
+            n++;
         } else {
             canWrite = true;
         }
@@ -88,9 +89,36 @@ int sscanner_cut(char *string, char a, char b) {
         if (canWrite && string[cRead] != '\0') {
             string[cWrite] = string[cRead];
             cWrite++;
+            n++;
         }
     }
 
+
+    return n;
+}
+
+
+int sscanner_get(const char *string, char a, char b, char *result) {
+
+    int n = 0;
+
+    for (int i = 0; i < strlen(string); ++i) {
+
+        if (string[i] == a) {
+
+            i++;
+            int count = 0;
+            while (i < strlen(string) && string[i] != b) {
+
+                result[count] = string[i];
+                count++;
+                i++;
+                n++;
+            }
+
+        }
+
+    }
 
     return n;
 }

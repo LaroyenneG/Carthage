@@ -9,10 +9,12 @@
 #include <stdbool.h>
 
 
-extern int scanner_next_line(FILE* file, char* string);
+extern int scanner_next_line(FILE *file, char *string);
 
-extern bool sscanner_contains(const char* string, const char* substring);
+extern bool sscanner_contains(const char *string, const char *substring);
 
-extern int sscanner_cut(char* string, char a, char b);
+extern int sscanner_cut(char *string, char a, char b);
+
+extern int sscanner_get(const char *string, char a, char b, char *result);
 
 #endif //LIBRARY_SCANNER_H
