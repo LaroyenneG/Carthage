@@ -9,6 +9,7 @@
 #include <glob.h>
 #include <zconf.h>
 #include <stdbool.h>
+#include <bits/types/FILE.h>
 
 
 /*
@@ -222,6 +223,15 @@ int vector_size(vector_t *vector);
 int vector_remove_element(vector_t *vector, void *element);
 
 void vector_print(vector_t *vector, void (*print)(void *element));
+
+
+/*
+ * Scanner
+ */
+
+bool sscanner_contains(const char *string, const char *substring);
+
+int scanner_next_line(FILE *file, char *string);
 
 
 #endif //GL_LIBRARY_GL_LIBRARY_H

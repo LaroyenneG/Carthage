@@ -6,9 +6,11 @@
 #define LIBRARY_SCANNER_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 
 extern int scanner_next_line(FILE* file, char* string);
 
+extern bool sscanner_contains(const char* string, const char* substring);
 
 #endif //LIBRARY_SCANNER_H
