@@ -313,6 +313,10 @@ void *thread_test_time_out(void *args) {
 
 void test_time_out() {
 
+    /*
+     * test sans wait
+     */
+
     b = false;
 
     pthread_t pthread;
@@ -342,6 +346,23 @@ void test_time_out() {
     assert(b);
 
     sleep(15);
+
+    /*
+     * test avec wait
+     */
+
+    b = false;
+
+    pthread_t pthread3;
+    if (pthread_create(&pthread3, NULL, thread_test_time_out, NULL)) {
+        perror("pthread_create()");
+        exit(EXIT_FAILURE);
+    }
+
+    time_out(pthread, 10, true);
+
+    assert(b);
+
 }
 
 

@@ -10,28 +10,6 @@
 #include "log.h"
 
 
-void *thread_time_out(void *args) {
-
-    args_threads_t *args_threads = args;
-
-    if (args_threads->argc != 3) {
-        print_anomaly_master("Invalid argument in thread_time_out()");
-    }
-
-    unsigned int time = *(unsigned int *) args_threads->argv[0];
-    pthread_t pthread = *(pthread_t *) args_threads->argv[1];
-
-
-    sleep(time);
-
-    pthread_cancel(pthread);
-    pthread_join(pthread, NULL);
-
-    args_threads_free(args);
-
-    pthread_exit(NULL);
-}
-
 args_threads_t *args_threads_create(size_t n) {
 
     args_threads_t *args_threads = malloc(sizeof(args_threads_t));
@@ -62,6 +40,32 @@ void args_threads_free(args_threads_t *args_threads) {
     free(args_threads);
 }
 
+
+void *thread_time_out(void *args) {
+
+    args_threads_t *args_threads = args;
+
+    if (args_threads->argc != 2) {
+        print_anomaly_master("invalid argument in thread_time_out()");
+    }
+
+    unsigned int time = *(unsigned int *) args_threads->argv[0];
+    pthread_t pthread = *(pthread_t *) args_threads->argv[1];
+
+
+    sleep(time);
+
+    pthread_cancel(pthread);
+    pthread_join(pthread, NULL);
+
+    free(args_threads->argv[0]);
+    free(args_threads->argv[1]);
+    args_threads_free(args);
+
+    pthread_exit(NULL);
+}
+
+
 int time_out(pthread_t thread, unsigned int time, bool wait) {
 
     pthread_t *pthread = malloc(sizeof(pthread_t));
@@ -80,21 +84,23 @@ int time_out(pthread_t thread, unsigned int time, bool wait) {
 
     *pTime = time;
 
-    args_threads_t *args_threads = args_threads_create(0);
+    args_threads_t *args_threads = args_threads_create(2);
 
+    /*
     pthread_t *t = malloc(sizeof(pthread_t));
     if (t == NULL) {
         perror("malloc()");
         exit(EXIT_FAILURE);
     }
+     */
 
     args_threads->argv[0] = pTime;
     args_threads->argv[1] = pthread;
-    args_threads->argv[2] = t;
-    args_threads->argc = 3;
+    // args_threads->argv[2] = t;
 
 
-    if (pthread_create(t, NULL, thread_time_out, args_threads) < 0) {
+    pthread_t t;
+    if (pthread_create(&t, NULL, thread_time_out, args_threads) < 0) {
         perror("pthread_create()");
         exit(EXIT_FAILURE);
     }
@@ -102,9 +108,9 @@ int time_out(pthread_t thread, unsigned int time, bool wait) {
     int status = 0;
 
     if (wait) {
-        status = pthread_join(*t, NULL);
+        status = pthread_join(t, NULL);
     } else {
-        status = pthread_detach(*t);
+        status = pthread_detach(t);
     }
 
     return status;
