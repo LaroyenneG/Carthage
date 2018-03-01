@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 01/01/18.
+// Created by Guillaume LAROYENNE on 01/01/18.
 //
 
 #include <stdio.h>
@@ -15,6 +15,8 @@ void print_anomaly(const char *string) {
     printf("[ANOMALY]\t%s\n", string);
 
     color_term(DEFAULT);
+
+    fflush(stdout);
 }
 
 
@@ -27,6 +29,8 @@ void print_success(const char *string) {
     printf("]");
 
     printf("\t%s\n", string);
+
+    fflush(stdout);
 }
 
 
@@ -39,6 +43,8 @@ void print_warning(const char *string) {
     printf("]");
 
     printf("\t%s\n", string);
+
+    fflush(stdout);
 }
 
 
@@ -51,6 +57,8 @@ void print_failed(const char *string) {
     printf("]");
 
     printf("\t%s\n", string);
+
+    fflush(stdout);
 }
 
 
@@ -63,6 +71,8 @@ void print_anomaly_master(const char *string) {
     printf("]");
 
     printf("\t%s\n", string);
+
+    fflush(stdout);
 
     exit(EXIT_ANOMALY_MASTER);
 }
