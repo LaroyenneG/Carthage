@@ -24,9 +24,9 @@ void debug_print(const char *string) {
 
         printf("[%s %s] %s\n", DEBUG, date, string);
         fflush(stdout);
-    }
 
-    free(date);
+        free(date);
+    }
 }
 
 
