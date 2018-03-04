@@ -9,7 +9,7 @@
 
 void print_anomaly(const char *string) {
 
-    printf("\\e[0;31m[ANOMALY]\\e[0;m\t%s\n", string);
+    printf("\e[0;31m[ANOMALY]\e[0;m\t%s\n", string);
 
     fflush(stdout);
 }
@@ -17,7 +17,7 @@ void print_anomaly(const char *string) {
 
 void print_success(const char *string) {
 
-    printf("[\\e[1;32m  OK  \\e[0;m]\t%s\n", string);
+    printf("[\e[1;32m  OK  \e[0;m]\t%s\n", string);
 
     fflush(stdout);
 }
@@ -25,7 +25,7 @@ void print_success(const char *string) {
 
 void print_warning(const char *string) {
 
-    printf("[\\e[0;33mWARNING\\e[0;m]\t%s\n", string);
+    printf("[\e[0;33mWARNING\e[0;m]\t%s\n", string);
 
     fflush(stdout);
 }
@@ -33,7 +33,7 @@ void print_warning(const char *string) {
 
 void print_failed(const char *string) {
 
-    printf("[\\e[0;31mFAILED\\e[0;m]\t%s\n", string);
+    printf("[\e[0;31mFAILED\e[0;m]\t%s\n", string);
 
     fflush(stdout);
 }
@@ -41,7 +41,7 @@ void print_failed(const char *string) {
 
 void print_anomaly_master(const char *string) {
 
-    printf("\\e[0;31m[MASTER ANOMALY]\t%s\\e[0;m\n", string);
+    printf("\e[0;31m[MASTER ANOMALY]\t%s\e[0;m\n", string);
 
     fflush(stdout);
 
