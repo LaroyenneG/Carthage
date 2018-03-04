@@ -14,14 +14,15 @@ static bool debug = true;
 
 void debug_print(const char *string) {
 
-    time_t t;
-    time(&t);
-
-    char *date = ctime(&t);
-    date[strlen(date) - 1] = '\0';
-
     if (debug) {
-        printf("[%s %s] %s", DEBUG, date, string);
+
+        time_t t;
+        time(&t);
+
+        char *date = ctime(&t);
+        date[strlen(date) - 1] = '\0';
+
+        printf("[%s %s] %s\n", DEBUG, date, string);
         fflush(stdout);
     }
 
