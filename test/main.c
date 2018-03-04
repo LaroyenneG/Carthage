@@ -149,7 +149,6 @@ void test_list() {
 
 void *test_list_thread(void *arg) {
 
-    (void) arg;
 
     char address[TAB_ADDR_LEN];
 
@@ -158,7 +157,11 @@ void *test_list_thread(void *arg) {
     }
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
-        list_remove(globalList, i);
+        list_add(globalList, &address[i]);
+    }
+
+    for (int i = 0; i < TAB_ADDR_LEN; ++i) {
+        list_remove(globalList, (unsigned int) i);
     }
 
 
@@ -187,9 +190,13 @@ void test_list_with_threads() {
         list_add(globalList, &address[i]);
     }
 
+    for (int i = 0; i < TAB_ADDR_LEN; ++i) {
+        list_add(globalList, &address[i]);
+    }
+
     pthread_join(thread, NULL);
 
-    assert(list_size(globalList) == TAB_ADDR_LEN * 2);
+    assert(list_size(globalList) == TAB_ADDR_LEN * 4);
 
     list_free(globalList);
 }
@@ -517,7 +524,6 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-
     pid_t pids[6];
 
     for (int j = 0; j < sizeof(pids) / sizeof(pid_t); ++j) {
@@ -557,12 +563,11 @@ int main(int argc, char **argv) {
 
                 case 5:
                     test_map();
-                    test_map_with_threads();
+                    //test_map_with_threads();
                     break;
 
                 default:
                     printf("Oups\n");
-                    break;
             }
 
             exit(EXIT_SUCCESS);
@@ -575,7 +580,7 @@ int main(int argc, char **argv) {
         int status;
         waitpid(pids[i], &status, 0);
         char string[100];
-        sprintf(string, "Test %d", i);
+        sprintf(string, "test n°%d", i);
         if (status != EXIT_SUCCESS) {
             print_failed(string);
         } else {
