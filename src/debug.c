@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
+#include <memory.h>
 
 #include "debug.h"
 
@@ -18,7 +19,11 @@ void debug_print(const char *string) {
         time_t t;
         time(&t);
 
-        printf("[%s %s] %s\n", DEBUG, ctime(&t), string);
+        char dateString[100];
+        strcpy(dateString,ctime(&t));
+        dateString[strlen(dateString)-1]='\0';
+
+        printf("[%s %s] %s\n", DEBUG, dateString, string);
         fflush(stdout);
     }
 }

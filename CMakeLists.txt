@@ -4,8 +4,8 @@ project(gl_library)
 set(CMAKE_C_STANDARD 99)
 add_definitions(-Wall -x c)
 
-#add_executable(
-add_library(
+add_executable(
+#add_library(
         gl_library
         src/debug.c
         src/debug.h
@@ -26,7 +26,8 @@ add_library(
         src/vector.c
         src/vector.h
         gl_library.h
-        #test/main.c
-        )
+
+        test/main.c)
+#        )
 
 target_link_libraries(gl_library pthread)
