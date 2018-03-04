@@ -7,11 +7,11 @@
 
 #define DEBUG "DEBUG"
 
-extern void print_debug(const char *string);
+extern void debug_print(const char *string);
 
-extern void enable_debug();
+extern void debug_enable();
 
-extern void disable_debug();
+extern void debug_disable();
 
 
 #endif //LIBRARY_DEBUG_H

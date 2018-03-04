@@ -10,11 +10,9 @@
 
 #include "debug.h"
 
-
 static bool debug = true;
 
-
-void print_debug(const char *string) {
+void debug_print(const char *string) {
 
     time_t t;
     time(&t);
@@ -26,15 +24,17 @@ void print_debug(const char *string) {
         printf("[%s %s] %s", DEBUG, date, string);
         fflush(stdout);
     }
+
+    free(date);
 }
 
 
-void enable_debug() {
+void debug_enable() {
     debug = true;
 }
 
 
-void disable_debug() {
+void debug_disable() {
     debug = false;
 }
 

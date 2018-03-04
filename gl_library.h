@@ -16,11 +16,11 @@
  * Debug
  */
 
-void print_debug(const char *string);
+void debug_print(const char *string);
 
-void enable_debug();
+void debug_enable();
 
-void disable_debug();
+void debug_disable();
 
 
 /*

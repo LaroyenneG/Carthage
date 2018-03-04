@@ -6,15 +6,10 @@
 #include <stdlib.h>
 
 #include "log.h"
-#include "sublime_term.h"
 
 void print_anomaly(const char *string) {
 
-    color_term(RED);
-
-    printf("[ANOMALY]\t%s\n", string);
-
-    color_term(DEFAULT);
+    printf("\\e[0;31m[ANOMALY]\\e[0;m\t%s\n", string);
 
     fflush(stdout);
 }
@@ -22,13 +17,7 @@ void print_anomaly(const char *string) {
 
 void print_success(const char *string) {
 
-    printf("[");
-    color_term(GREEN);
-    printf("  OK  ");
-    color_term(DEFAULT);
-    printf("]");
-
-    printf("\t%s\n", string);
+    printf("[\\e[1;32m  OK  \\e[0;m]\t%s\n", string);
 
     fflush(stdout);
 }
@@ -36,13 +25,7 @@ void print_success(const char *string) {
 
 void print_warning(const char *string) {
 
-    printf("[");
-    color_term(ORANGE);
-    printf("WARNING");
-    color_term(DEFAULT);
-    printf("]");
-
-    printf("\t%s\n", string);
+    printf("[\\e[0;33mWARNING\\e[0;m]\t%s\n", string);
 
     fflush(stdout);
 }
@@ -50,13 +33,7 @@ void print_warning(const char *string) {
 
 void print_failed(const char *string) {
 
-    printf("[");
-    color_term(RED);
-    printf("FAILED");
-    color_term(DEFAULT);
-    printf("]");
-
-    printf("\t%s\n", string);
+    printf("[\\e[0;31mFAILED\\e[0;m]\t%s\n", string);
 
     fflush(stdout);
 }
@@ -64,13 +41,7 @@ void print_failed(const char *string) {
 
 void print_anomaly_master(const char *string) {
 
-    printf("[");
-    color_term(RED);
-    printf("MASTER ANOMALY");
-    color_term(DEFAULT);
-    printf("]");
-
-    printf("\t%s\n", string);
+    printf("\\e[0;31m[MASTER ANOMALY]\t%s\\e[0;m\n", string);
 
     fflush(stdout);
 
