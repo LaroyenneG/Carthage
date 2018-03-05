@@ -9,7 +9,7 @@
 
 void print_anomaly(const char *string) {
 
-    printf("\e[0;31m[ANOMALY]\e[0;m\t%s\n", string);
+    printf("[\e[0;31mANOMALY\e[0;m]\t%s\n", string);
 
     fflush(stdout);
 }
@@ -36,6 +36,13 @@ void print_failed(const char *string) {
     printf("[\e[0;31mFAILED\e[0;m]\t%s\n", string);
 
     fflush(stdout);
+}
+
+
+void print_message(const char *string) {
+
+    printf("[\e[1;36mMESSAGE\e[0;m]\t%s\n", string);
+
 }
 
 

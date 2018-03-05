@@ -15,6 +15,8 @@ extern void print_warning(const char* string);
 
 extern void print_failed(const char* string);
 
+extern void print_message(const char* string);
+
 extern void print_anomaly_master(const char* string);
 
 #endif //LIBRARY_LOG_H

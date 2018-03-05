@@ -79,7 +79,7 @@ void list_clear(list_t *list);
 
 bool list_contains(list_t *list, void *data);
 
-void *list_random_get(list_t* list);
+void *list_random_get(list_t *list);
 
 /*
  * Log
@@ -92,6 +92,8 @@ void print_success(const char *string);
 void print_warning(const char *string);
 
 void print_failed(const char *string);
+
+void print_message(const char *string);
 
 void print_anomaly_master(const char *string);
 
@@ -235,7 +237,7 @@ bool sscanner_contains(const char *string, const char *substring);
 
 int scanner_next_line(FILE *file, char *string);
 
-int sscanner_cut(char* string, char a, char b);
+int sscanner_cut(char *string, char a, char b);
 
 int sscanner_get(const char *string, char a, char b, char *result);
 
