@@ -5,18 +5,27 @@
 #ifndef LIBRARY_LOG_H
 #define LIBRARY_LOG_H
 
-#define EXIT_ANOMALY_MASTER -90
+#include <stdbool.h>
 
-extern void print_anomaly(const char* string);
+#define EXIT_ANOMALY_MASTER (-90)
+
+
+static bool active_log = false;
+
+extern void print_anomaly(const char *string);
 
 extern void print_success(const char *string);
 
-extern void print_warning(const char* string);
+extern void print_warning(const char *string);
 
-extern void print_failed(const char* string);
+extern void print_failed(const char *string);
 
-extern void print_message(const char* string);
+extern void print_message(const char *string);
 
-extern void print_anomaly_master(const char* string);
+extern void print_anomaly_master(const char *string);
+
+extern void enable_log();
+
+extern void disable_log();
 
 #endif //LIBRARY_LOG_H

@@ -97,6 +97,10 @@ void print_message(const char *string);
 
 void print_anomaly_master(const char *string);
 
+void enable_log();
+
+void disable_log();
+
 /*
  * Map
  */
