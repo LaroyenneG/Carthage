@@ -10,12 +10,6 @@
 #include "list.h"
 #include "scanner.h"
 
-struct s_celt {
-
-    struct s_celt *next;
-    void *data;
-
-};
 
 struct s_celt *celt_create(void *data) {
 
@@ -77,7 +71,7 @@ void celt_free(struct s_celt *celt) {
 size_t celt_length(struct s_celt *celt) {
 
     size_t length = 0;
-    while (celt) {
+    while (celt != NULL) {
         length++;
         celt = celt->next;
     }
@@ -85,6 +79,20 @@ size_t celt_length(struct s_celt *celt) {
     return length;
 }
 
+
+struct s_celt *celt_search(struct s_celt *celt, void *data, bool (*function)(void *, void *)) {
+
+    while (celt != NULL) {
+
+        if (function(celt->data, data)) {
+            return celt;
+        }
+
+        celt = celt->next;
+    }
+
+    return NULL;
+}
 
 list_t *list_create() {
 
@@ -144,13 +152,16 @@ void *list_get(list_t *list, unsigned int i) {
 
 void *list_remove(list_t *list, unsigned int i) {
 
-    if (list_size(list) == 0) {
+    pthread_mutex_lock(&list->mutex);
+
+    if (celt_length(list->root) == 0) {
+
+        pthread_mutex_unlock(&list->mutex);
         return NULL;
     }
 
     void *data;
 
-    pthread_mutex_lock(&list->mutex);
 
     struct s_celt *celt = list->root;
     struct s_celt *beforeCelt = list->root;
@@ -161,7 +172,6 @@ void *list_remove(list_t *list, unsigned int i) {
         list->root = celt_remove_first(list->root);
 
         pthread_mutex_unlock(&list->mutex);
-
         return data;
     }
 
@@ -174,7 +184,6 @@ void *list_remove(list_t *list, unsigned int i) {
             beforeCelt->next = celt_remove_first(celt);
 
             pthread_mutex_unlock(&list->mutex);
-
             return data;
         }
 
@@ -184,18 +193,19 @@ void *list_remove(list_t *list, unsigned int i) {
     }
 
     pthread_mutex_unlock(&list->mutex);
-
     return NULL;
 }
 
 void *list_remove_data(list_t *list, void *data) {
 
 
-    if (list_size(list) == 0) {
+    pthread_mutex_lock(&list->mutex);
+
+    if (celt_length(list->root) == 0) {
+        pthread_mutex_unlock(&list->mutex);
         return NULL;
     }
 
-    pthread_mutex_lock(&list->mutex);
 
     struct s_celt *celt = list->root;
     struct s_celt *beforeCelt = list->root;
@@ -206,7 +216,6 @@ void *list_remove_data(list_t *list, void *data) {
         list->root = celt_remove_first(list->root);
 
         pthread_mutex_unlock(&list->mutex);
-
         return data;
     }
 
@@ -218,7 +227,6 @@ void *list_remove_data(list_t *list, void *data) {
             beforeCelt->next = celt_remove_first(celt);
 
             pthread_mutex_unlock(&list->mutex);
-
             return data;
         }
 
@@ -227,7 +235,6 @@ void *list_remove_data(list_t *list, void *data) {
     }
 
     pthread_mutex_unlock(&list->mutex);
-
     return NULL;
 }
 
@@ -294,9 +301,61 @@ bool list_contains(list_t *list, void *data) {
 
 void *list_random_get(list_t *list) {
 
-    if (list_size(list) <= 0) {
-        return NULL;
+    pthread_mutex_lock(&list->mutex);
+
+
+    int i = randint(0, (int) (celt_length(list->root) - 1));
+    int count = 0;
+
+    struct s_celt *celt = list->root;
+
+    while (celt != NULL) {
+
+        if (count == i) {
+
+            pthread_mutex_unlock(&list->mutex);
+            return celt->data;
+        }
+
+        celt = celt->next;
+        count++;
     }
 
-    return list_get(list, (unsigned int) randint(0, list_size(list)-1));
+    pthread_mutex_unlock(&list->mutex);
+    return NULL;
+}
+
+
+void *list_search(list_t *list, void *data, bool (*function)(void *, void *)) {
+
+
+    pthread_mutex_lock(&list->mutex);
+
+    struct s_celt *celt = celt_search(list->root, data, function);
+
+    pthread_mutex_unlock(&list->mutex);
+    if (celt == NULL) {
+        return NULL;
+    } else {
+        return celt->data;
+    }
+}
+
+
+void list_add_if_not_found(list_t *list, void *data, bool (*function)(void *, void *)) {
+
+    pthread_mutex_lock(&list->mutex);
+
+    struct s_celt *celt = celt_search(list->root, data, function);
+
+    if (celt == NULL) {
+
+        if (list->root == NULL) {
+            list->root = celt_create(data);
+        } else {
+            celt_append(list->root, data);
+        }
+    }
+
+    pthread_mutex_unlock(&list->mutex);
 }
