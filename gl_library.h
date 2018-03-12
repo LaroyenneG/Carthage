@@ -81,6 +81,10 @@ bool list_contains(list_t *list, void *data);
 
 void *list_random_get(list_t *list);
 
+void *list_search(list_t *list, void *data, bool (*function)(void *, void *));
+
+void list_add_if_not_found(list_t *list, void *data, bool (*function)(void *, void *));
+
 /*
  * Log
  */
