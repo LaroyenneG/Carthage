@@ -11,6 +11,21 @@
 #include "scanner.h"
 
 
+struct map_element_s {
+    char *key;
+    void *data;
+    struct map_element_s *next;
+};
+
+static char *map_first_key(map_t *map);
+
+static struct map_element_s *map_element_create(const char *key, void *data);
+
+static void map_element_free(struct map_element_s *element);
+
+static void map_all_elements_free(struct map_element_s *element);
+
+
 void map_element_free(struct map_element_s *element) {
 
     if (element == NULL) {
@@ -254,7 +269,7 @@ char *map_random_key(map_t *map) {
 
     pthread_mutex_lock(&map->mutex);
 
-    int rand = randint(0, n-1);
+    int rand = randint(0, n - 1);
 
     struct map_element_s *select = map->root;
 

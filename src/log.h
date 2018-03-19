@@ -10,7 +10,6 @@
 #define EXIT_ANOMALY_MASTER (-90)
 
 
-static bool active_log = false;
 
 extern void print_anomaly(const char *string);
 

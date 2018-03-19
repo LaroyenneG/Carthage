@@ -7,6 +7,8 @@
 
 #include "log.h"
 
+static bool active_log = false;
+
 
 void print_anomaly(const char *string) {
 

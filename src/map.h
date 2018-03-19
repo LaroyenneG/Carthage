@@ -9,12 +9,6 @@
 #include <stdbool.h>
 
 
-struct map_element_s {
-    char *key;
-    void *data;
-    struct map_element_s *next;
-};
-
 typedef struct map_s {
 
     struct map_element_s *root;
@@ -47,15 +41,6 @@ extern void map_clear(map_t *map);
 extern char *map_random_key(map_t *map);
 
 extern char *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
-
-
-static char *map_first_key(map_t *map);
-
-static struct map_element_s *map_element_create(const char *key, void *data);
-
-static void map_element_free(struct map_element_s *element);
-
-static void map_all_elements_free(struct map_element_s *element);
 
 
 #endif //LIBRARY_MAP_H

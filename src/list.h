@@ -15,27 +15,6 @@ typedef struct list_s {
 
 } list_t;
 
-struct s_celt {
-
-    struct s_celt *next;
-    void *data;
-
-};
-
-
-static struct s_celt *celt_create(void *data);
-
-static struct s_celt *celt_prepend(struct s_celt *old, void *data);
-
-static struct s_celt *celt_append(struct s_celt *celt, void *data);
-
-static struct s_celt *celt_remove_first(struct s_celt *celt);
-
-static void celt_free(struct s_celt *celt);
-
-static size_t celt_length(struct s_celt *celt);
-
-static struct s_celt *celt_search(struct s_celt *celt, void *data, bool (*function)(void *, void *));
 
 
 extern list_t *list_create();
