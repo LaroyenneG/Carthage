@@ -7,6 +7,7 @@
 
 #include "log.h"
 
+
 void print_anomaly(const char *string) {
 
     if (!active_log) {
