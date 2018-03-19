@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 project(gl_library)
 
 set(CMAKE_C_STANDARD 99)
-add_definitions(-Wall -x c)
+add_definitions(-g -Wall -x c)
 
 #add_executable(
 add_library(
