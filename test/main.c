@@ -4,11 +4,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <zconf.h>
 #include <wait.h>
 #include <memory.h>
 
+#include "cunit.h"
 #include "../src/fifo.h"
 #include "../src/list.h"
 #include "../src/vector.h"
@@ -39,8 +39,8 @@ void test_fifo() {
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
 
         fifo_append(fifo, &address[i]);
-        assert(fifo_is_empty(fifo) == false);
-        assert(fifo_size(fifo) == i + 1);
+        ASSERT_FALSE(fifo_is_empty(fifo));
+        ASSERT_EQUALS_INTEGER(fifo_size(fifo), i + 1);
     }
 
     int size = fifo_size(fifo);
@@ -51,8 +51,8 @@ void test_fifo() {
 
         size--;
 
-        assert(p == &address[j]);
-        assert(fifo_size(fifo) == size);
+        ASSERT_EQUALS(p, &address[j], NULL);
+        ASSERT_EQUALS_INTEGER(fifo_size(fifo), size);
     }
 
 
@@ -100,7 +100,7 @@ void test_fifo_with_threads() {
     pthread_join(thread, NULL);
 
 
-    assert(fifo_size(globalFifo) == TAB_ADDR_LEN * 3 - TAB_ADDR_LEN);
+    ASSERT_EQUALS_INTEGER(fifo_size(globalFifo), TAB_ADDR_LEN * 3 - TAB_ADDR_LEN);
 
     fifo_free(globalFifo);
 }
@@ -112,7 +112,7 @@ void test_list() {
 
     char address[TAB_ADDR_LEN];
 
-    assert(list_size(list) == 0);
+    ASSERT_EQUALS_INTEGER(list_size(list), 0);
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
 
@@ -120,29 +120,29 @@ void test_list() {
     }
 
     int size = TAB_ADDR_LEN;
-    assert(list_size(list) == size);
+    ASSERT_EQUALS_INTEGER(list_size(list), size);
 
     for (int j = 0; j < TAB_ADDR_LEN; ++j) {
 
-        void *pVoid = list_get(list, j);
-        assert(pVoid == &address[j]);
+        void *pVoid = list_get(list, (unsigned int) j);
+        ASSERT_EQUALS(pVoid, &address[j], NULL);
     }
 
     void *pVoid = list_remove(list, 3);
-    assert(pVoid == &address[3]);
-    assert(list_size(list) == size - 1);
+    ASSERT_EQUALS(pVoid, &address[3], NULL);
+    ASSERT_EQUALS_INTEGER(list_size(list), size - 1);
 
     pVoid = list_remove(list, 0);
-    assert(pVoid == &address[0]);
-    assert(list_size(list) == size - 2);
-    assert(list_get(list, 0) == &address[1]);
+    ASSERT_EQUALS(pVoid, &address[0], NULL);
+    ASSERT_EQUALS_INTEGER(list_size(list), size - 2);
+    ASSERT_EQUALS(list_get(list, 0), &address[1], NULL);
 
-    assert(list_contains(list, &address[5]));
-    assert(!list_contains(list, &address[3]));
+    ASSERT_TRUE(list_contains(list, &address[5]));
+    ASSERT_TRUE(!list_contains(list, &address[3]));
 
     list_clear(list);
 
-    assert(list_size(list) == 0);
+    ASSERT_EQUALS_INTEGER(list_size(list), 0);
 
     list_free(list);
 }
@@ -196,7 +196,7 @@ void test_list_with_threads() {
 
     pthread_join(thread, NULL);
 
-    assert(list_size(globalList) == TAB_ADDR_LEN * 4);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN * 4, list_size(globalList));
 
     list_free(globalList);
 }
@@ -223,19 +223,19 @@ void test_vector() {
         int *e = malloc(sizeof(int));
         *e = i;
         vector_add_element(vector, e);
-        assert(vector_element_at(vector, i) == e);
-        assert(vector_contains(vector, e));
+        ASSERT_EQUALS(e, vector_element_at(vector, i), NULL);
+        ASSERT_TRUE(vector_contains(vector, e));
     }
 
     int *q = 0;
 
-    assert(!vector_contains(vector, q));
+    ASSERT_FALSE(vector_contains(vector, q));
 
-    assert(1000 == vector->elementCount);
+    ASSERT_EQUALS_INTEGER(1000, vector->elementCount);
 
     int *f = vector_element_at(vector, 10);
 
-    assert(*f == 10);
+    ASSERT_EQUALS_INTEGER(10, *f);
 
     int rest = vector->capacityIncrement - vector->elementCount;
     for (int a = 0; a <= rest; a++) {
@@ -243,29 +243,29 @@ void test_vector() {
     }
 
 
-    assert(!vector_add(vector, (void *) 15));
+    ASSERT_FALSE(vector_add(vector, (void *) 15));
 
     int g = 10269;
     vector_add_element(vector, &g);
 
-    assert(*((int *) vector_first(vector)) == 0);
+    ASSERT_EQUALS_INTEGER(0, *((int *) vector_first(vector)));
 
-    assert(*((int *) vector_last_element(vector)) == g);
+    ASSERT_EQUALS_INTEGER(g, *((int *) vector_last_element(vector)));
 
-    assert(vector_index_of(vector, &g) == 1000);
-    assert(1001 == vector->elementCount);
+    ASSERT_EQUALS_INTEGER(1000, vector_index_of(vector, &g));
+    ASSERT_EQUALS_INTEGER(1001, vector->elementCount);
 
     vector_add_element(vector, &g);
-    assert(vector_last_index_of(vector, &g) == 1001);
+    ASSERT_EQUALS_INTEGER(1001, vector_last_index_of(vector, &g));
 
     vector_ensure_capacity(vector, 100001);
-    assert(vector->capacityIncrement == 100001);
+    ASSERT_EQUALS_INTEGER(100001, vector->capacityIncrement);
 
     vector_trim_to_size(vector);
-    assert(vector->elementCount == 1002);
+    ASSERT_EQUALS_INTEGER(1002, vector->elementCount);
 
     vector_clear(vector);
-    assert(vector->capacityIncrement == vector->buffer);
+    ASSERT_EQUALS_INTEGER(vector->capacityIncrement, vector->buffer);
 
 
     vector_free_all(vector);
@@ -295,10 +295,10 @@ void test_vector_with_threads() {
 
     pthread_join(thread, NULL);
 
-    assert(vector_size(globalVector) == TAB_ADDR_LEN * 2 - 10);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN * 2 - 10, vector_size(globalVector));
 
     for (int k = 0; k < globalVector->elementCount; ++k) {
-        assert(globalVector->elementData[k] != NULL);
+        ASSERT_NOT_NULL(globalVector->elementData[k]);
     }
 
     vector_free(globalVector);
@@ -350,7 +350,7 @@ void test_time_out() {
 
     pthread_join(pthread2, NULL);
 
-    assert(b);
+    ASSERT_TRUE(b);
 
     sleep(15);
 
@@ -368,34 +368,33 @@ void test_time_out() {
 
     time_out(pthread, 10, true);
 
-    assert(b);
+    ASSERT_TRUE(b);
 
 }
 
 
 void test_scanner() {
 
-    assert(sscanner_contains("tototatiti", "toto"));
+    ASSERT_TRUE(sscanner_contains("tototatiti", "toto"));
 
-    assert(!sscanner_contains("tototatiti", "toty"));
+    ASSERT_FALSE(sscanner_contains("tototatiti", "toty"));
 
-    assert(sscanner_contains("tototgatitig", "g"));
+    ASSERT_TRUE(sscanner_contains("tototgatitig", "g"));
 
-    assert(!sscanner_contains("t", "toto"));
+    ASSERT_FALSE(sscanner_contains("t", "toto"));
 
-    assert(sscanner_contains("tototatiti fedfe guigui jfvnbiearb", "guigui"));
+    ASSERT_TRUE(sscanner_contains("tototatiti fedfe guigui jfvnbiearb", "guigui"));
 
     char string[] = "siugifiurgf zerfggruigf [zeyfuigvezyufgv] eyzgfuyzegzef";
 
 
     sscanner_cut(string, '[', ']');
 
-
-    assert(strcmp(string, "siugifiurgf zerfggruigf  eyzgfuyzegzef") == 0);
+    ASSERT_EQUALS_STRING(string, "siugifiurgf zerfggruigf  eyzgfuyzegzef");
 
     for (int i = 0; i < 1000; ++i) {
-        assert(randint(0, 10) <= 10);
-        assert(randint(0, 10) >= 0);
+        ASSERT_TRUE(randint(0, 10) <= 10);
+        ASSERT_TRUE(randint(0, 10) >= 0);
     }
 }
 
@@ -413,8 +412,8 @@ void *thread_test_map(void *args) {
 
         map_put(globalMap, key, data[i]);
 
-        assert(map_contains_key(globalMap, key));
-        assert(map_contains_value(globalMap, data[i]));
+        ASSERT_TRUE(map_contains_key(globalMap, key));
+        ASSERT_TRUE(map_contains_value(globalMap, data[i]));
     }
 
     pthread_exit(NULL);
@@ -438,11 +437,11 @@ void test_map_with_threads() {
         map_put(globalMap, key, data[i]);
     }
 
-    assert(map_size(globalMap) >= TAB_ADDR_LEN);
+    ASSERT_TRUE(map_size(globalMap) >= TAB_ADDR_LEN);
 
     pthread_join(pthread, NULL);
 
-    assert(map_size(globalMap) == TAB_ADDR_LEN * 2);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN * 2, map_size(globalMap));
 
 
     pthread_create(&pthread, NULL, thread_test_map, NULL);
@@ -456,7 +455,7 @@ void test_map_with_threads() {
     pthread_join(pthread, NULL);
 
 
-    assert(map_size(globalMap) == TAB_ADDR_LEN * 2);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN * 2, map_size(globalMap));
 
     map_free(globalMap);
 }
@@ -465,21 +464,21 @@ void test_map() {
 
     map_t *map = map_create();
 
-    assert(map_size(map) == 0);
+    ASSERT_EQUALS_INTEGER(0, map_size(map));
 
     map_put(map, "aaa", NULL);
 
-    assert(map_size(map) == 1);
+    ASSERT_EQUALS_INTEGER(1, map_size(map));
 
     map_remove(map, "aaa");
 
-    assert(map_size(map) == 0);
+    ASSERT_EQUALS_INTEGER(0, map_size(map));
 
     for (int i = 0; i < 3; ++i) {
         map_put(map, "bbb", (void *) i);
     }
 
-    assert(map_size(map) == 1);
+    ASSERT_EQUALS_INTEGER(1, map_size(map));
 
     int data[TAB_ADDR_LEN];
 
@@ -488,22 +487,22 @@ void test_map() {
         char string[100];
         sprintf(string, "%d", i);
         map_put(map, string, &data[i]);
-        assert(map_random_key(map) != NULL);
+        ASSERT_NOT_NULL(map_random_key(map));
     }
 
 
-    assert(map_size(map) == TAB_ADDR_LEN + 1);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN + 1, map_size(map));
 
-    assert(map_contains_value(map, &data[0]));
-    assert(!map_contains_value(map, NULL));
-    assert(!map_contains_value(map, (void *) 11566498498));
-    assert(!map_contains_key(map, ",rgerkig"));
-    assert(map_contains_key(map, "1"));
-    assert(map_contains_key(map, "2"));
+    ASSERT_TRUE(map_contains_value(map, &data[0]));
+    ASSERT_FALSE(map_contains_value(map, NULL));
+    ASSERT_FALSE(map_contains_value(map, (void *) 11566498498));
+    ASSERT_FALSE(map_contains_key(map, ",rgerkig"));
+    ASSERT_TRUE(map_contains_key(map, "1"));
+    ASSERT_TRUE(map_contains_key(map, "2"));
 
-    assert(map_get(map, "2") == &data[2]);
-    assert(map_get(map, "bbb") == (void *) 2);
-    assert(map_get(map, "babylouba") == NULL);
+    ASSERT_NOT_EQUALS(&data[2], map_get(map, "2"), NULL);
+    ASSERT_NOT_EQUALS((void *) 2, map_get(map, "bbb"), NULL);
+    ASSERT_NULL(map_get(map, "babylouba"));
 
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
@@ -512,81 +511,31 @@ void test_map() {
         map_remove(map, string);
     }
 
-    assert(map_size(map) == 1);
+    ASSERT_EQUALS_INTEGER(1, map_size(map));
 
     map_free(map);
 }
 
 
-int main(int argc, char **argv) {
+int main(void) {
 
-    if (argc != 1) {
-        exit(EXIT_FAILURE);
-    }
+    CUNIT_ADD_TEST_FUNCTION(&test_fifo, "fifo");
+    CUNIT_ADD_TEST_FUNCTION(&test_fifo_with_threads, "fifo thread");
 
-    pid_t pids[6];
+    CUNIT_ADD_TEST_FUNCTION(&test_list, "list");
+    CUNIT_ADD_TEST_FUNCTION(&test_list_with_threads, "list thread");
 
-    for (int j = 0; j < sizeof(pids) / sizeof(pid_t); ++j) {
+    CUNIT_ADD_TEST_FUNCTION(&test_vector, "vector");
+    CUNIT_ADD_TEST_FUNCTION(&test_vector_with_threads, "vector thread");
 
-        pids[j] = fork();
-        if (pids[j] < 0) {
-            perror("fork()");
-            exit(EXIT_FAILURE);
-        }
+    CUNIT_ADD_TEST_FUNCTION(&test_scanner, "scanner");
 
-        if (pids[j] == 0) {
+    CUNIT_ADD_TEST_FUNCTION(&test_time_out, "time out");
 
-            switch (j) {
+    CUNIT_ADD_TEST_FUNCTION(&test_map, "map");
+    CUNIT_ADD_TEST_FUNCTION(&test_map_with_threads, "map thread");
 
-                case 0:
-                    test_fifo();
-                    test_fifo_with_threads();
-                    break;
-
-                case 1:
-                    test_list();
-                    test_list_with_threads();
-                    break;
-
-                case 2:
-                    test_vector();
-                    test_vector_with_threads();
-                    break;
-
-                case 3:
-                    test_time_out();
-                    break;
-
-                case 4:
-                    test_scanner();
-                    break;
-
-                case 5:
-                    test_map();
-                    //test_map_with_threads();
-                    break;
-
-                default:
-                    printf("Oups\n");
-            }
-
-            exit(EXIT_SUCCESS);
-        }
-
-    }
-
-
-    for (int i = 0; i < sizeof(pids) / sizeof(pid_t); ++i) {
-        int status;
-        waitpid(pids[i], &status, 0);
-        char string[100];
-        sprintf(string, "test n°%d", i);
-        if (status != EXIT_SUCCESS) {
-            print_failed(string);
-        } else {
-            print_success(string);
-        }
-    }
+    CUNIT_RUN();
 
     return 0;
 }

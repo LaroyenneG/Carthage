@@ -27,7 +27,7 @@ add_library(
         src/vector.h
         gl_library.h
 
-#        test/main.c)
-        )
+#       test/cunit.c test/cunit.h test/main.c)
+              )
 
 target_link_libraries(gl_library pthread)
