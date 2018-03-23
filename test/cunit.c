@@ -67,7 +67,7 @@ void cunit_assert_null(void *pVoid, const char *file, int line) {
 
 void cunit_assert_equals(void *elt1, void *elt2, bool(*pFunction)(void *, void *), const char *file, int line) {
 
-    if (!pFunction(elt1, elt2)) {
+    if (elt1 != elt2 && !pFunction(elt1, elt2)) {
         cunit_assert_error_equals("Comparison Failure", "false", "true", file, line);
     }
 }
@@ -137,7 +137,7 @@ void cunit_assert_not_equals_string(const char *expected, const char *actual, co
 
 void cunit_assert_not_equals(void *elt1, void *elt2, bool(*pFunction)(void *, void *), const char *file, int line) {
 
-    if (pFunction(elt1, elt2)) {
+    if (elt1 == elt2 || pFunction(elt1, elt2)) {
         cunit_assert_error_equals("Comparison Failure", "true", "false", file, line);
     }
 }
@@ -208,6 +208,7 @@ void cunit_exec_test() {
             exit(EXIT_FAILURE);
         }
 
+        sleep(1);
 
         switch (WEXITSTATUS(status)) {
 
@@ -222,7 +223,7 @@ void cunit_exec_test() {
                 break;
 
             default:
-                printf(STATUS_TEST_MESSAGE, i + 1, nameArray[i], "no status");
+                printf(STATUS_TEST_MESSAGE, i + 1, nameArray[i], "status");
                 break;
 
         }
@@ -243,7 +244,6 @@ void cunit_exec_test() {
 
     printf("\nCUnit result :\n");
     for (int j = 0; j < sizeof(testsCont) / sizeof(int); ++j) {
-
 
         switch (j) {
 
@@ -266,10 +266,12 @@ void cunit_exec_test() {
         printf("\t\t\t\t%d ", testsCont[j]);
 
         if (testsCont[j] < 1) {
-            printf("test ");
+            printf("test");
         } else {
-            printf("tests ");
+            printf("tests");
         }
+
+        printf(" ");
 
         switch (j) {
 
@@ -290,6 +292,8 @@ void cunit_exec_test() {
         }
 
         printf("\x1B[0m\n");
+
+        fflush(stdout);
     }
 
 
