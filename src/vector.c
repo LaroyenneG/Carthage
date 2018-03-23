@@ -18,7 +18,7 @@ vector_t *vector_create() {
         exit(EXIT_FAILURE);
     }
 
-    vector->buffer = 10;
+    vector->buffer = 100;
 
     vector->capacityIncrement = vector->buffer;
 
