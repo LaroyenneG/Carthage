@@ -40,7 +40,7 @@ void test_fifo() {
 
         fifo_append(fifo, &address[i]);
         ASSERT_FALSE(fifo_is_empty(fifo));
-        ASSERT_EQUALS_INTEGER(fifo_size(fifo), i + 1);
+        ASSERT_EQUALS_INTEGER(i + 1, fifo_size(fifo));
     }
 
     int size = fifo_size(fifo);
@@ -51,8 +51,8 @@ void test_fifo() {
 
         size--;
 
-        ASSERT_EQUALS(p, &address[j], NULL);
-        ASSERT_EQUALS_INTEGER(fifo_size(fifo), size);
+        ASSERT_EQUALS(&address[j], p, NULL);
+        ASSERT_EQUALS_INTEGER(size, fifo_size(fifo));
     }
 
 
@@ -84,7 +84,7 @@ void test_fifo_with_threads() {
 
     if (pthread_create(&thread, NULL, test_fifo_thread, NULL) < 0) {
         perror("pthread_create()");
-        return;
+        exit(EXIT_FAILURE);
     }
 
     char address[TAB_ADDR_LEN];
@@ -100,7 +100,7 @@ void test_fifo_with_threads() {
     pthread_join(thread, NULL);
 
 
-    ASSERT_EQUALS_INTEGER(fifo_size(globalFifo), TAB_ADDR_LEN * 3 - TAB_ADDR_LEN);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN * 3 - TAB_ADDR_LEN, fifo_size(globalFifo));
 
     fifo_free(globalFifo);
 }
@@ -112,7 +112,7 @@ void test_list() {
 
     char address[TAB_ADDR_LEN];
 
-    ASSERT_EQUALS_INTEGER(list_size(list), 0);
+    ASSERT_EQUALS_INTEGER(0, list_size(list));
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
 
@@ -120,12 +120,12 @@ void test_list() {
     }
 
     int size = TAB_ADDR_LEN;
-    ASSERT_EQUALS_INTEGER(list_size(list), size);
+    ASSERT_EQUALS_INTEGER(size, list_size(list));
 
     for (int j = 0; j < TAB_ADDR_LEN; ++j) {
 
         void *pVoid = list_get(list, (unsigned int) j);
-        ASSERT_EQUALS(pVoid, &address[j], NULL);
+        ASSERT_EQUALS(&address[j], pVoid, NULL);
     }
 
     void *pVoid = list_remove(list, 3);
