@@ -5,7 +5,6 @@
 #ifndef LIBRARY_MAP_H
 #define LIBRARY_MAP_H
 
-#include <evdns.h>
 #include <stdbool.h>
 
 

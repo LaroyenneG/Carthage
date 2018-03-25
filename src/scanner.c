@@ -3,7 +3,8 @@
 //
 
 #include <string.h>
-#include <tkPort.h>
+#include <time.h>
+#include <stdlib.h>
 #include "scanner.h"
 
 int randint(int low, int high) {

@@ -2,7 +2,7 @@
 
 EXEC_NAME="test.exe"
 
-gcc -c -Wall *.c ../src/*.c
+gcc -c -std=c99 -Wall *.c ../src/*.c
 gcc -o $EXEC_NAME *.o -lpthread
 
 rm *.o
