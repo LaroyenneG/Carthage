@@ -6,10 +6,10 @@
 #define GL_LIBRARY_GL_LIBRARY_H
 
 
-#include <glob.h>
-#include <zconf.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
-#include <bits/types/FILE.h>
+
 
 #ifdef __cplusplus
 extern "C" {
