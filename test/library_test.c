@@ -392,6 +392,28 @@ void test_scanner() {
 
     ASSERT_EQUALS_STRING(string, "siugifiurgf zerfggruigf  eyzgfuyzegzef");
 
+    char string2[] = "iuyrfheiurghrfieuher|[shudfsd]|hsuhsfiu[hdsd]dsuib[]";
+
+    char str1[500];
+
+    sscanner_get(string2, '[', ']', str1);
+
+    ASSERT_EQUALS_STRING(str1, "shudfsd");
+
+    ASSERT_EQUALS_STRING(string2, "iuyrfheiurghrfieuher|[shudfsd]|hsuhsfiu[hdsd]dsuib[]");
+
+    sscanner_cut(string2, '|', '|');
+
+    ASSERT_EQUALS_STRING(string2, "iuyrfheiurghrfieuherhsuhsfiu[hdsd]dsuib[]");
+
+
+    char str2[500];
+
+    sscanner_get(string2, '[', ']', str2);
+
+    ASSERT_EQUALS_STRING(str2, "hdsd");
+
+
     for (int i = 0; i < 1000; ++i) {
         ASSERT_TRUE(randint(0, 10) <= 10);
         ASSERT_TRUE(randint(0, 10) >= 0);
