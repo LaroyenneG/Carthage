@@ -17,8 +17,8 @@ add_library(
         src/log.h
         src/map.c
         src/map.h
-        src/scanner.c
-        src/scanner.h
+        src/sscanner.c
+        src/sscanner.h
         src/sublime_term.c
         src/sublime_term.h
         src/thread_lib.c
@@ -40,8 +40,8 @@ add_executable(test_exec
         src/log.h
         src/map.c
         src/map.h
-        src/scanner.c
-        src/scanner.h
+        src/sscanner.c
+        src/sscanner.h
         src/sublime_term.c
         src/sublime_term.h
         src/thread_lib.c

@@ -8,7 +8,7 @@
 #include <stdbool.h>
 
 #include "list.h"
-#include "scanner.h"
+#include "sscanner.h"
 
 
 struct s_celt {

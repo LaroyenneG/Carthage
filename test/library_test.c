@@ -14,7 +14,7 @@
 #include "../src/vector.h"
 #include "../src/thread_lib.h"
 #include "../src/log.h"
-#include "../src/scanner.h"
+#include "../src/sscanner.h"
 #include "../src/map.h"
 
 

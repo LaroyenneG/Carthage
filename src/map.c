@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #include "map.h"
-#include "scanner.h"
+#include "sscanner.h"
 
 
 struct map_element_s {
@@ -93,6 +93,11 @@ map_t *map_create() {
 
 void map_put(map_t *map, const char *key, void *data) {
 
+
+    if (map == NULL || key == NULL) {
+        return;
+    }
+
     pthread_mutex_lock(&map->mutex);
 
     struct map_element_s *select;
@@ -121,6 +126,12 @@ void map_put(map_t *map, const char *key, void *data) {
 
 void *map_get(map_t *map, const char *key) {
 
+
+    if (map == NULL || key == NULL) {
+        return NULL;
+    }
+
+
     pthread_mutex_lock(&map->mutex);
 
     void *data = NULL;
@@ -145,7 +156,7 @@ void *map_get(map_t *map, const char *key) {
 
 void *map_remove(map_t *map, const char *key) {
 
-    if (map_size(map) <= 0) {
+    if (map == NULL || key == NULL || map_size(map) <= 0) {
         return NULL;
     }
 
@@ -197,6 +208,10 @@ void map_free(map_t *map) {
 
 int map_size(map_t *map) {
 
+    if (map == NULL) {
+        return -1;
+    }
+
     pthread_mutex_lock(&map->mutex);
 
     int size = (int) map->size;
@@ -208,6 +223,10 @@ int map_size(map_t *map) {
 
 
 bool map_contains_key(map_t *map, const char *key) {
+
+    if (map == NULL || key == NULL) {
+        return false;
+    }
 
     pthread_mutex_lock(&map->mutex);
 
@@ -230,6 +249,10 @@ bool map_contains_key(map_t *map, const char *key) {
 
 bool map_contains_value(map_t *map, void *data) {
 
+    if (map == NULL || data == NULL) {
+        return false;
+    }
+
     pthread_mutex_lock(&map->mutex);
 
     struct map_element_s *select;
@@ -251,6 +274,10 @@ bool map_contains_value(map_t *map, void *data) {
 
 void map_clear(map_t *map) {
 
+    if (map == NULL) {
+        return;
+    }
+
     char *elementKey;
 
     while ((elementKey = map_first_key(map)) != NULL) {
@@ -263,7 +290,7 @@ char *map_random_key(map_t *map) {
 
     int n;
 
-    if ((n = map_size(map)) == 0) {
+    if (map == NULL || (n = map_size(map)) == 0) {
         return NULL;
     }
 
@@ -286,7 +313,7 @@ char *map_random_key(map_t *map) {
 
 char *map_first_key(map_t *map) {
 
-    if (map_size(map) == 0) {
+    if (map == NULL || map_size(map) == 0) {
         return NULL;
     }
 
@@ -302,6 +329,9 @@ char *map_first_key(map_t *map) {
 
 char *map_find(map_t *map, bool (*function)(void *, void *), void *elt) {
 
+    if (map == NULL || elt == NULL) {
+        return NULL;
+    }
 
     pthread_mutex_lock(&map->mutex);
 
@@ -324,6 +354,12 @@ char *map_find(map_t *map, bool (*function)(void *, void *), void *elt) {
 
 
 void map_print(map_t *map) {
+
+
+    if (map == NULL) {
+        return;
+    }
+
     struct map_element_s *select;
 
     printf("Map : [");

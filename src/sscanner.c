@@ -5,14 +5,14 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
-#include "scanner.h"
+#include "sscanner.h"
 
 int randint(int low, int high) {
 
 
     static int first = 0;
     if (first == 0) {
-        srand(time(NULL));
+        srand((unsigned int) time(NULL));
         first = 1;
     }
 
