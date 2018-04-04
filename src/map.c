@@ -278,11 +278,15 @@ void map_clear(map_t *map) {
         return;
     }
 
+    pthread_mutex_lock(&map->mutex);
+
     char *elementKey;
 
     while ((elementKey = map_first_key(map)) != NULL) {
         map_remove(map, elementKey);
     }
+
+    pthread_mutex_unlock(&map->mutex);
 }
 
 
