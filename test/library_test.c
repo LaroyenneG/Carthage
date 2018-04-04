@@ -522,8 +522,8 @@ void test_map() {
     ASSERT_TRUE(map_contains_key(map, "1"));
     ASSERT_TRUE(map_contains_key(map, "2"));
 
-    ASSERT_NOT_EQUALS(&data[2], map_get(map, "2"), NULL);
-    ASSERT_NOT_EQUALS((void *) 2, map_get(map, "bbb"), NULL);
+    ASSERT_EQUALS(&data[1], map_get(map, "2"), NULL);
+    ASSERT_NULL(map_get(map, "bbb"));
     ASSERT_NULL(map_get(map, "babylouba"));
 
 

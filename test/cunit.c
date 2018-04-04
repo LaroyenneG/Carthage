@@ -15,7 +15,6 @@
 static void **functionArray = NULL;
 static char **nameArray = NULL;
 static int arrayLen = 0;
-static char assertName[SIZE_MAX];
 
 
 static void cunit_assert_error_equals(const char *message, const char *expected, const char *actual, const char *file,
@@ -183,7 +182,6 @@ void cunit_exec_test() {
 
     int testsCont[] = {0, 0, 0};
 
-    memset(assertName, '\0', SIZE_MAX);
 
     void (*function)(void);
 
@@ -241,64 +239,64 @@ void cunit_exec_test() {
     }
 
     char resultMessage[500];
-
     sprintf(resultMessage, "\nCUnit result :\n");
+
     for (int j = 0; j < sizeof(testsCont) / sizeof(int); ++j) {
 
         switch (j) {
 
             case 0:
-                sprintf(resultMessage, "\x1B[34m");
+                strcat(resultMessage, "\x1B[34m");
                 break;
 
             case 1:
-                sprintf(resultMessage, "\x1B[31m");
+                strcat(resultMessage, "\x1B[31m");
                 break;
 
             case 2:
-                sprintf(resultMessage, "\x1B[32m");
+                strcat(resultMessage, "\x1B[32m");
                 break;
 
             default:
                 exit(EXIT_FAILURE);
         }
 
-        sprintf(resultMessage, "\t\t\t\t%d ", testsCont[j]);
+        sprintf(&resultMessage[strlen(resultMessage)], "\t\t\t\t%d ", testsCont[j]);
 
         if (testsCont[j] < 1) {
-            sprintf(resultMessage, "test");
+            strcat(resultMessage, "test");
         } else {
-            sprintf(resultMessage, "tests");
+            strcat(resultMessage, "tests");
         }
 
-        sprintf(resultMessage, " ");
+        strcat(resultMessage, " ");
 
         switch (j) {
 
             case 0:
-                sprintf(resultMessage, "done");
+                strcat(resultMessage, "done");
                 break;
 
             case 1:
-                sprintf(resultMessage, "failed");
+                strcat(resultMessage, "failed");
                 break;
 
             case 2:
-                sprintf(resultMessage, "passed");
+                strcat(resultMessage, "passed");
                 break;
 
             default:
                 exit(EXIT_FAILURE);
         }
 
-        sprintf(resultMessage, "\x1B[0m\n");
-
-        printf("%s", resultMessage);
-
-        fflush(stdout);
+        strcat(resultMessage, "\n");
     }
 
+    strcat(resultMessage, "\x1B[0m\n");
 
+    printf("%s", resultMessage);
+
+    fflush(stdout);
 }
 
 
