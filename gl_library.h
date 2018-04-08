@@ -145,7 +145,7 @@ char *map_random_key(map_t *map);
 
 char *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
 
-extern void *map_random_elt(map_t* map);
+extern void *map_random_get(map_t *map);
 
 
 /*

@@ -534,7 +534,7 @@ void test_map() {
 
     for (int j = 0; j < 10000000; ++j) {
 
-        void *elt = map_random_elt(map);
+        void *elt = map_random_get(map);
 
         for (int i = 0; i < TAB_ADDR_LEN; ++i) {
             if (elt == data[i]) {
