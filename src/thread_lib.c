@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 01/01/18.
+// Created by Guillaume LAROYENNE on 01/01/18.
 //
 
 #include <stdio.h>

@@ -93,11 +93,6 @@ map_t *map_create() {
 
 void map_put(map_t *map, const char *key, void *data) {
 
-
-    if (map == NULL || key == NULL) {
-        return;
-    }
-
     pthread_mutex_lock(&map->mutex);
 
     struct map_element_s *select;
@@ -126,12 +121,6 @@ void map_put(map_t *map, const char *key, void *data) {
 
 void *map_get(map_t *map, const char *key) {
 
-
-    if (map == NULL || key == NULL) {
-        return NULL;
-    }
-
-
     pthread_mutex_lock(&map->mutex);
 
     void *data = NULL;
@@ -156,17 +145,13 @@ void *map_get(map_t *map, const char *key) {
 
 void *map_remove(map_t *map, const char *key) {
 
-    if (map == NULL || key == NULL || map_size(map) <= 0) {
-        return NULL;
-    }
-
     pthread_mutex_lock(&map->mutex);
 
     void *data = NULL;
 
     struct map_element_s *select = map->root;
 
-    if (strcmp(select->key, key) == 0) {
+    if (key != NULL && strcmp(select->key, key) == 0) {
         data = select->data;
         map->root = select->next;
         map_all_elements_free(select);
@@ -224,10 +209,6 @@ int map_size(map_t *map) {
 
 bool map_contains_key(map_t *map, const char *key) {
 
-    if (map == NULL || key == NULL) {
-        return false;
-    }
-
     pthread_mutex_lock(&map->mutex);
 
     struct map_element_s *select;
@@ -248,10 +229,6 @@ bool map_contains_key(map_t *map, const char *key) {
 
 
 bool map_contains_value(map_t *map, void *data) {
-
-    if (map == NULL || data == NULL) {
-        return false;
-    }
 
     pthread_mutex_lock(&map->mutex);
 
@@ -292,17 +269,11 @@ void map_clear(map_t *map) {
 
 char *map_random_key(map_t *map) {
 
-    int n;
-
-    if (map == NULL || (n = map_size(map)) == 0) {
-        return NULL;
-    }
-
     pthread_mutex_lock(&map->mutex);
 
-    int rand = randint(0, n - 1);
-
     struct map_element_s *select = map->root;
+
+    int rand = randint(0, (int) (map->size - 1));
 
     for (int i = 0; i < rand; ++i) {
         select = select->next;
@@ -317,10 +288,6 @@ char *map_random_key(map_t *map) {
 
 char *map_first_key(map_t *map) {
 
-    if (map == NULL || map_size(map) == 0) {
-        return NULL;
-    }
-
     pthread_mutex_lock(&map->mutex);
 
     char *key = map->root->key;
@@ -332,10 +299,6 @@ char *map_first_key(map_t *map) {
 
 
 char *map_find(map_t *map, bool (*function)(void *, void *), void *elt) {
-
-    if (map == NULL || elt == NULL) {
-        return NULL;
-    }
 
     pthread_mutex_lock(&map->mutex);
 
@@ -354,6 +317,28 @@ char *map_find(map_t *map, bool (*function)(void *, void *), void *elt) {
     pthread_mutex_unlock(&map->mutex);
 
     return NULL;
+}
+
+
+extern void *map_random_elt(map_t *map) {
+
+    pthread_mutex_lock(&map->mutex);
+
+    struct map_element_s *select;
+
+
+    int r = randint(0, (int) map->size);
+    int i;
+    for (i = 0, select = map->root; select != NULL && r != i; select = select->next, i++);
+
+
+    pthread_mutex_unlock(&map->mutex);
+
+    if (select == NULL) {
+        return NULL;
+    } else {
+        return select->data;
+    }
 }
 
 
