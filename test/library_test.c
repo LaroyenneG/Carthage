@@ -502,7 +502,7 @@ void test_map() {
 
     ASSERT_EQUALS_INTEGER(1, map_size(map));
 
-    int data[TAB_ADDR_LEN];
+    void *data[TAB_ADDR_LEN];
 
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
@@ -525,6 +525,28 @@ void test_map() {
     ASSERT_EQUALS(&data[1], map_get(map, "2"), NULL);
     ASSERT_NULL(map_get(map, "bbb"));
     ASSERT_NULL(map_get(map, "babylouba"));
+
+    bool checking[TAB_ADDR_LEN];
+    for (int k = 0; k < TAB_ADDR_LEN; ++k) {
+        checking[k] = false;
+    }
+
+
+    for (int j = 0; j < 10000000; ++j) {
+
+        void *elt = map_random_elt(map);
+
+        for (int i = 0; i < TAB_ADDR_LEN; ++i) {
+            if (elt == data[i]) {
+                checking[i] = true;
+                break;
+            }
+        }
+    }
+
+    for (int l = 0; l < TAB_ADDR_LEN; ++l) {
+        ASSERT_TRUE(checking[l]);
+    }
 
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
