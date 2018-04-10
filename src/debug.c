@@ -20,8 +20,8 @@ void debug_print(const char *string) {
         time(&t);
 
         char dateString[100];
-        strcpy(dateString,ctime(&t));
-        dateString[strlen(dateString)-1]='\0';
+        strcpy(dateString, ctime(&t));
+        dateString[strlen(dateString) - 1] = '\0';
 
         printf("[%s %s] %s\n", DEBUG, dateString, string);
         fflush(stdout);

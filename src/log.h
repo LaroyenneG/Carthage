@@ -10,7 +10,6 @@
 #define EXIT_ANOMALY_MASTER (-90)
 
 
-
 extern void print_anomaly(const char *string);
 
 extern void print_success(const char *string);

@@ -5,15 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <zconf.h>
-#include <wait.h>
-#include <memory.h>
 
 #include "cunit.h"
 #include "../src/fifo.h"
 #include "../src/list.h"
 #include "../src/vector.h"
 #include "../src/thread_lib.h"
-#include "../src/log.h"
 #include "../src/sscanner.h"
 #include "../src/map.h"
 

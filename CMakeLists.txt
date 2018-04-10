@@ -52,7 +52,7 @@ add_executable(test_exec
         test/cunit.c
         test/cunit.h
         test/library_test.c
-)
+        )
 
 
 target_link_libraries(gl_library pthread)

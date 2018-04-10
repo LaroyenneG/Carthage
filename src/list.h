@@ -16,7 +16,6 @@ typedef struct list_s {
 } list_t;
 
 
-
 extern list_t *list_create();
 
 extern int list_size(list_t *list);

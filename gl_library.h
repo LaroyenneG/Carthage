@@ -255,7 +255,7 @@ int sscanner_cut(char *string, char a, char b);
 int sscanner_get(const char *string, char a, char b, char *result);
 
 int randint(int low, int high);
-    
+
 #ifdef __cplusplus
 }
 #endif
