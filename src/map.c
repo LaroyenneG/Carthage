@@ -191,15 +191,12 @@ void map_free(map_t *map) {
 }
 
 
-int map_size(map_t *map) {
+unsigned int map_size(map_t *map) {
 
-    if (map == NULL) {
-        return -1;
-    }
 
     pthread_mutex_lock(&map->mutex);
 
-    int size = (int) map->size;
+    unsigned int size = (unsigned int) map->size;
 
     pthread_mutex_unlock(&map->mutex);
 

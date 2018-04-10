@@ -31,7 +31,7 @@ extern void *map_get(map_t *map, const char *key);
 
 extern void *map_remove(map_t *map, const char *key);
 
-extern int map_size(map_t *map);
+extern unsigned int map_size(map_t *map);
 
 extern void map_print(map_t *map);
 
