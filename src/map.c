@@ -154,7 +154,7 @@ void *map_remove(map_t *map, const char *key) {
     if (key != NULL && strcmp(select->key, key) == 0) {
         data = select->data;
         map->root = select->next;
-        map_all_elements_free(select);
+        map_element_free(select);
         map->size--;
     } else {
         while (select->next != NULL) {
@@ -174,6 +174,37 @@ void *map_remove(map_t *map, const char *key) {
     pthread_mutex_unlock(&map->mutex);
 
     return data;
+}
+
+
+void map_remove_elt(map_t *map, void *data) {
+    pthread_mutex_lock(&map->mutex);
+
+
+    struct map_element_s *select = map->root;
+
+    if (select->data == data) {
+        data = select->data;
+        map->root = select->next;
+        map_element_free(select);
+        map->size--;
+    } else {
+        while (select->next != NULL) {
+            if (select->data == data) {
+                data = select->next->data;
+                struct map_element_s *tmp = select->next->next;
+                map_element_free(select->next);
+                select->next = tmp;
+                map->size--;
+                break;
+            } else {
+                select = select->next;
+            }
+        }
+    }
+
+    pthread_mutex_unlock(&map->mutex);
+
 }
 
 
