@@ -193,7 +193,6 @@ void map_free(map_t *map) {
 
 unsigned int map_size(map_t *map) {
 
-
     pthread_mutex_lock(&map->mutex);
 
     unsigned int size = (unsigned int) map->size;
@@ -317,7 +316,7 @@ char *map_find(map_t *map, bool (*function)(void *, void *), void *elt) {
 }
 
 
-extern void *map_random_get(map_t *map) {
+void *map_random_get(map_t *map) {
 
     pthread_mutex_lock(&map->mutex);
 
