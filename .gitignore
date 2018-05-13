@@ -1,6 +1,7 @@
 # CLion
 .idea/
 cmake-build-debug/*
+*.iml
 
 # Prerequisites
 *.d
