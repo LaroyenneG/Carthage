@@ -1,6 +1,6 @@
-//
-// Created by Guillaume LAROYENNE on 19/03/18.
-//
+/*
+ * Created by Guillaume LAROYENNE on 19/03/18.
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <zconf.h>
 
-#define SIZE_MAX 1000
 #define STATUS_TEST_MESSAGE "[TEST N°%d %s : %s]\n"
 
 static void **functionArray = NULL;
@@ -72,13 +71,13 @@ void cunit_assert_equals(void *elt1, void *elt2, bool(*pFunction)(void *, void *
 }
 
 
-void cunit_assert_equals_integer(long expected, long actual, const char *file, int line) {
+void cunit_assert_equals_integer(long long int expected, long long int actual, const char *file, int line) {
 
     char srtExpected[20];
     char strActual[20];
 
-    sprintf(srtExpected, "%li", expected);
-    sprintf(strActual, "%li", actual);
+    sprintf(srtExpected, "%lli", expected);
+    sprintf(strActual, "%lli", actual);
 
     if (expected != actual) {
         cunit_assert_error_equals("Assertion Error", srtExpected, strActual, file, line);
@@ -94,13 +93,13 @@ void cunit_assert_equals_string(const char *expected, const char *actual, const 
 }
 
 
-void cunit_assert_equals_real(double expected, double actual, const char *file, int line) {
+void cunit_assert_equals_real(long double expected, long double actual, const char *file, int line) {
 
     char srtExpected[20];
     char strActual[20];
 
-    sprintf(srtExpected, "%lf", expected);
-    sprintf(strActual, "%lf", actual);
+    sprintf(srtExpected, "%Lf", expected);
+    sprintf(strActual, "%Lf", actual);
 
 
     if (expected != actual) {
@@ -128,12 +127,12 @@ void cunit_assert_equals_pointer(void *expected, void *actual, const char *file,
  * Not equals functions
  */
 
-void cunit_assert_not_equals_integer(long expected, long actual, const char *file, int line) {
+void cunit_assert_not_equals_integer(long long int expected, long long int actual, const char *file, int line) {
 
 
     char strActual[20];
 
-    sprintf(strActual, "%li", actual);
+    sprintf(strActual, "%lli", actual);
 
     if (expected != actual) {
         cunit_assert_error_not_equals("Assertion Error", strActual, file, line);
@@ -165,11 +164,11 @@ void cunit_assert_not_null(void *pVoid, const char *file, int line) {
 }
 
 
-void cunit_assert_not_equals_real(double expected, double actual, const char *file, int line) {
+void cunit_assert_not_equals_real(long double expected, long double actual, const char *file, int line) {
 
     char strActual[20];
 
-    sprintf(strActual, "%lf", actual);
+    sprintf(strActual, "%Lf", actual);
 
     if (expected == actual) {
         cunit_assert_error_not_equals("Assertion Error", strActual, file, line);
@@ -210,7 +209,7 @@ void cunit_assert_fail(const char *file, int line) {
 void cunit_exec_test() {
 
 
-    int testsCont[] = {0, 0, 0};
+    int testsCount[] = {0, 0, 0};
 
 
     void (*function)(void);
@@ -241,12 +240,12 @@ void cunit_exec_test() {
 
             case EXIT_FAILURE:
                 printf(STATUS_TEST_MESSAGE, i + 1, nameArray[i], "failed");
-                testsCont[1]++;
+                testsCount[1]++;
                 break;
 
             case EXIT_SUCCESS:
                 printf(STATUS_TEST_MESSAGE, i + 1, nameArray[i], "success");
-                testsCont[2]++;
+                testsCount[2]++;
                 break;
 
             default:
@@ -255,7 +254,7 @@ void cunit_exec_test() {
 
         }
 
-        testsCont[0]++;
+        testsCount[0]++;
     }
 
 
@@ -271,7 +270,7 @@ void cunit_exec_test() {
     char resultMessage[500];
     sprintf(resultMessage, "\nCUnit result :\n");
 
-    for (int j = 0; j < sizeof(testsCont) / sizeof(int); ++j) {
+    for (int j = 0; j < sizeof(testsCount) / sizeof(int); ++j) {
 
         switch (j) {
 
@@ -291,15 +290,15 @@ void cunit_exec_test() {
                 exit(EXIT_FAILURE);
         }
 
-        sprintf(&resultMessage[strlen(resultMessage)], "\t\t\t\t%d ", testsCont[j]);
+        sprintf(&resultMessage[strlen(resultMessage)], "\t\t\t\t%d ", testsCount[j]);
 
-        if (testsCont[j] < 1) {
+        if (testsCount[j] < 1) {
             strcat(resultMessage, "test");
         } else {
             strcat(resultMessage, "tests");
         }
 
-        strcat(resultMessage, " ");
+        strcat(resultMessage, "\t");
 
         switch (j) {
 

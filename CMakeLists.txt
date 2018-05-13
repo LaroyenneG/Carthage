@@ -49,9 +49,9 @@ add_executable(test_exec
         src/vector.c
         src/vector.h
         gl_library.h
+        test/library_test.c
         test/cunit.c
         test/cunit.h
-        test/library_test.c
         )
 
 

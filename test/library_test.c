@@ -15,7 +15,7 @@
 #include "../src/map.h"
 
 
-#define TAB_ADDR_LEN 20000
+#define TAB_ADDR_LEN 3000
 
 /*
  * Test all Library
