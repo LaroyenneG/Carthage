@@ -15,7 +15,7 @@
 #include "../src/map.h"
 
 
-#define TAB_ADDR_LEN 3000
+#define TAB_ADDR_LEN 30000
 
 /*
  * Test all Library
@@ -418,6 +418,10 @@ void test_scanner() {
 }
 
 
+/*
+ * Map
+ */
+
 void *thread_test_map(void *args) {
 
     static int p = TAB_ADDR_LEN;
@@ -478,6 +482,7 @@ void test_map_with_threads() {
 
     map_free(globalMap);
 }
+
 
 void test_map() {
 
@@ -560,6 +565,26 @@ void test_map() {
 
 int main(void) {
 
+
+    map_t *map = map_create();
+
+
+    int i;
+    map_put(map, "abcdefh0", &i);
+    map_put(map, "abcdefh1", &i);
+    map_put(map, "abcdefh2", &i);
+    map_put(map, "abcdefh3", &i);
+    map_put(map, "abcdefh4", &i);
+
+
+    printf("%zu\n", hashcode("abcdefh0"));
+    printf("%zu\n", hashcode("abcdefh1"));
+    printf("%zu\n", hashcode("abcdefh2"));
+    printf("%zu\n", hashcode("abcdefh3"));
+    printf("%zu\n", hashcode("abcdefh4"));
+
+
+    /*
     CUNIT_ADD_TEST_FUNCTION(&test_fifo, "fifo");
     CUNIT_ADD_TEST_FUNCTION(&test_fifo_with_threads, "fifo thread");
 
@@ -577,6 +602,7 @@ int main(void) {
     CUNIT_ADD_TEST_FUNCTION(&test_map_with_threads, "map thread");
 
     CUNIT_RUN();
+    */
 
     return 0;
 }

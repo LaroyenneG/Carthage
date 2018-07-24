@@ -44,5 +44,7 @@ extern char *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
 
 extern void map_reformat(map_t *map);
 
+extern size_t hashcode(const char *key);
+
 
 #endif //LIBRARY_MAP_H

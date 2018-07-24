@@ -147,7 +147,7 @@ char *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
 
 void *map_random_get(map_t *map);
 
-void map_remove_elt(map_t *map, void *data);
+size_t hashcode(const char *key);
 
 
 /*
@@ -257,6 +257,8 @@ int sscanner_cut(char *string, char a, char b);
 int sscanner_get(const char *string, char a, char b, char *result);
 
 int randint(int low, int high);
+
+bool randbool();
 
 #ifdef __cplusplus
 }

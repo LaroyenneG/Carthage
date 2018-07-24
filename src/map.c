@@ -8,6 +8,7 @@
 #include <pthread.h>
 
 #include "map.h"
+#include "sscanner.h"
 
 #define DEFAULT_BLOCK_SIZE 10
 
@@ -38,8 +39,6 @@ static void map_block_free(struct map_block *block);
 static void map_block_free_all(struct map_block *block);
 
 static struct map_block *map_create_block(size_t start, size_t size);
-
-static size_t hashcode(const char *key);
 
 static struct map_element_s **map_block_go(struct map_block *block, size_t index);
 
@@ -87,10 +86,6 @@ size_t map_block_nb_elt(struct map_block *block) {
         }
     }
 
-    if (block->next != NULL) {
-        size += map_block_nb_elt(block);
-    }
-
     return size;
 }
 
@@ -99,7 +94,15 @@ struct map_element_s **map_block_go(struct map_block *block, size_t index) {
 
     struct map_element_s **select = NULL;
 
-    if (block->size + block->start > index) {
+    if (map_block_nb_elt(block) == 0 && block->next == NULL) {
+
+        map_realloc_block(block, DEFAULT_BLOCK_SIZE);
+
+        block->start = index;
+
+        select = &block->table[index - block->start];
+
+    } else if (block->start <= index && index - block->start < block->size) {
 
         select = &block->table[index - block->start];
 
@@ -115,6 +118,7 @@ struct map_element_s **map_block_go(struct map_block *block, size_t index) {
     } else {
 
         block->next = map_create_block(block->start + block->size - 1, DEFAULT_BLOCK_SIZE);
+
         select = map_block_go(block->next, index);
     }
 
@@ -122,18 +126,22 @@ struct map_element_s **map_block_go(struct map_block *block, size_t index) {
     return select;
 }
 
-size_t hashcode(const char *key) {
 
+size_t hashcode(const char *key) {
 
     size_t code = 0;
 
     size_t key_len = strlen(key);
 
-    int pow = 1;
 
     for (int i = 0; i < key_len; i++) {
+
+        size_t pow = 1;
+        for (int p = 0; p < key_len - i - 1; ++p) {
+            pow *= sizeof(size_t) * 8 - 1;
+        }
+
         code += key[i] * pow;
-        pow *= 10;
     }
 
     return code;
@@ -143,11 +151,16 @@ size_t hashcode(const char *key) {
 void map_realloc_block(struct map_block *block, size_t size) {
 
     if (size > 0) {
-        block->table = realloc(block->table, sizeof(struct map_element_s) * size);
+
+        block->table = realloc(block->table, sizeof(struct map_element_s *) * size);
 
         if (block->table == NULL) {
             perror("realloc()");
             exit(EXIT_FAILURE);
+        }
+
+        for (size_t i = block->size; i < size; ++i) {
+            block->table[i] = NULL;
         }
 
     } else {
@@ -170,16 +183,21 @@ struct map_block *map_create_block(size_t start, size_t size) {
     block->start = start;
 
     if (size > 0) {
-        block->table = malloc(sizeof(struct map_element_s) * size);
+
+        block->table = malloc(sizeof(struct map_element_s *) * size);
+
         if (block->table == NULL) {
             perror("malloc()");
             exit(EXIT_FAILURE);
         }
 
+        for (size_t i = 0; i < block->size; ++i) {
+            block->table[i] = NULL;
+        }
+
     } else {
         block->table = NULL;
     }
-
 
     block->size = size;
 
@@ -229,7 +247,7 @@ map_t *map_create() {
         exit(EXIT_FAILURE);
     }
 
-    map->root = map_create_block(0, 0);
+    map->root = map_create_block(0, DEFAULT_BLOCK_SIZE);
 
     pthread_mutex_init(&map->mutex, NULL);
 
@@ -318,7 +336,14 @@ size_t map_size(map_t *map) {
 
     pthread_mutex_lock(&map->mutex);
 
-    size_t size = map_block_nb_elt(map->root);
+    size_t size = 0;
+
+    struct map_block *block = map->root;
+
+    while (block != NULL) {
+        size += map_block_nb_elt(block);
+        block = block->next;
+    }
 
     pthread_mutex_unlock(&map->mutex);
 
@@ -347,10 +372,26 @@ bool map_contains_value(map_t *map, void *data) {
 
     pthread_mutex_lock(&map->mutex);
 
+    struct map_block *block = map->root;
+
+    bool contains = false;
+
+    while (block != NULL && !contains) {
+
+        for (size_t i = 0; i < block->size; ++i) {
+
+            if (block->table[i] != NULL && block->table[i]->data == data) {
+                contains = true;
+                break;
+            }
+        }
+
+        block = block->next;
+    }
 
     pthread_mutex_unlock(&map->mutex);
 
-    return false;
+    return contains;
 }
 
 
@@ -373,14 +414,40 @@ char *map_random_key(map_t *map) {
     pthread_mutex_lock(&map->mutex);
 
 
+    char *key = NULL;
 
-    //size_t rand = randint(0,  - 1);
 
+    struct map_block *block = map->root;
+
+    while (block != NULL) {
+
+        if (block->next != NULL && randbool()) {
+
+            block = block->next;
+
+        } else {
+
+            size_t nb_elt = map_block_nb_elt(block);
+
+            for (size_t i = 0; i < block->size; ++i) {
+
+                if (block->table[i] != NULL) {
+
+                    if (randint(0, (int) i) == 1 || nb_elt <= 0) {
+                        key = block->table[i]->key;
+                        block = NULL;
+                        break;
+                    }
+
+                    nb_elt--;
+                }
+            }
+        }
+    }
 
     pthread_mutex_unlock(&map->mutex);
 
-
-    return NULL;
+    return key;
 }
 
 
