@@ -135,7 +135,7 @@ void *map_get(map_t *map, const char *key);
 
 void *map_remove(map_t *map, const char *key);
 
-unsigned int map_size(map_t *map);
+size_t map_size(map_t *map);
 
 void map_print(map_t *map);
 

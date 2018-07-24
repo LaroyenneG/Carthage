@@ -20,4 +20,6 @@ extern int sscanner_get(const char *string, char a, char b, char *result);
 
 extern int randint(int low, int high);
 
+extern bool randbool();
+
 #endif //LIBRARY_SCANNER_H

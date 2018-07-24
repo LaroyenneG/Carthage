@@ -8,10 +8,9 @@
 #include <stdbool.h>
 
 
-typedef struct map_s {
+typedef struct {
 
-    struct map_element_s *root;
-    size_t size;
+    struct map_block *root;
     pthread_mutex_t mutex;
 
 } map_t;
@@ -31,9 +30,7 @@ extern void *map_get(map_t *map, const char *key);
 
 extern void *map_remove(map_t *map, const char *key);
 
-extern void map_remove_elt(map_t *map, void *data);
-
-extern unsigned int map_size(map_t *map);
+extern size_t map_size(map_t *map);
 
 extern void map_print(map_t *map);
 
@@ -44,6 +41,8 @@ extern char *map_random_key(map_t *map);
 extern void *map_random_get(map_t *map);
 
 extern char *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
+
+extern void map_reformat(map_t *map);
 
 
 #endif //LIBRARY_MAP_H

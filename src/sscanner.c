@@ -32,6 +32,15 @@ int randint(int low, int high) {
 }
 
 
+bool randbool() {
+
+    int n = randint(0, 10);
+
+
+    return n % 2 == 0;
+}
+
+
 int scanner_next_line(FILE *file, char *string) {
 
     int c;
