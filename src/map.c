@@ -389,10 +389,29 @@ char *map_first_key(map_t *map) {
     pthread_mutex_lock(&map->mutex);
 
 
+    char *key = NULL;
+
+    struct map_block *block = map->root;
+
+    while (block != NULL) {
+
+        bool find = false;
+
+        for (size_t i = 0; i < block->size && !find; i++) {
+            if (block->table[i] != NULL) {
+                key = block->table[i]->key;
+                find = true;
+            }
+        }
+
+        if (!find) {
+            block = block->next;
+        }
+    }
 
     pthread_mutex_unlock(&map->mutex);
 
-    return NULL;
+    return key;
 }
 
 
