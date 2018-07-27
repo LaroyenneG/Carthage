@@ -436,7 +436,6 @@ void *thread_test_map(void *args) {
         map_put(globalMap, key, data[i]);
 
         ASSERT_TRUE(map_contains_key(globalMap, key));
-        ASSERT_TRUE(map_contains_value(globalMap, data[i]));
     }
 
     pthread_exit(NULL);
@@ -511,15 +510,11 @@ void test_map() {
         char string[100];
         sprintf(string, "%d", i);
         map_put(map, string, &data[i]);
-        ASSERT_NOT_NULL(map_random_key(map));
     }
 
 
     ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN + 1, map_size(map));
 
-    ASSERT_TRUE(map_contains_value(map, &data[0]));
-    ASSERT_FALSE(map_contains_value(map, NULL));
-    ASSERT_FALSE(map_contains_value(map, (void *) 11566498498));
     ASSERT_FALSE(map_contains_key(map, ",rgerkig"));
     ASSERT_TRUE(map_contains_key(map, "1"));
     ASSERT_TRUE(map_contains_key(map, "2"));
@@ -565,26 +560,6 @@ void test_map() {
 
 int main(void) {
 
-
-    map_t *map = map_create();
-
-
-    int i;
-    map_put(map, "abcdefh0", &i);
-    map_put(map, "abcdefh1", &i);
-    map_put(map, "abcdefh2", &i);
-    map_put(map, "abcdefh3", &i);
-    map_put(map, "abcdefh4", &i);
-
-
-    printf("%zu\n", hashcode("abcdefh0"));
-    printf("%zu\n", hashcode("abcdefh1"));
-    printf("%zu\n", hashcode("abcdefh2"));
-    printf("%zu\n", hashcode("abcdefh3"));
-    printf("%zu\n", hashcode("abcdefh4"));
-
-
-    /*
     CUNIT_ADD_TEST_FUNCTION(&test_fifo, "fifo");
     CUNIT_ADD_TEST_FUNCTION(&test_fifo_with_threads, "fifo thread");
 
@@ -602,7 +577,6 @@ int main(void) {
     CUNIT_ADD_TEST_FUNCTION(&test_map_with_threads, "map thread");
 
     CUNIT_RUN();
-    */
 
     return 0;
 }

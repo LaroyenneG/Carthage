@@ -114,7 +114,7 @@ void disable_log();
 
 typedef struct {
 
-    struct map_element_s *root;
+    struct map_element_s **table;
     size_t size;
     pthread_mutex_t mutex;
 
@@ -129,25 +129,17 @@ void map_put(map_t *map, const char *key, void *data);
 
 bool map_contains_key(map_t *map, const char *key);
 
-bool map_contains_value(map_t *map, void *data);
-
 void *map_get(map_t *map, const char *key);
 
 void *map_remove(map_t *map, const char *key);
 
 size_t map_size(map_t *map);
 
-void map_print(map_t *map);
-
 void map_clear(map_t *map);
-
-char *map_random_key(map_t *map);
-
-char *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
 
 void *map_random_get(map_t *map);
 
-size_t hashcode(const char *key);
+unsigned long long int hashcode(const char *key);
 
 
 /*
