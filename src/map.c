@@ -95,6 +95,7 @@ void map_put(map_t *map, const char *key, void *data) {
             }
 
         } else {
+
             lastNull = &map->table[i];
         }
     }
@@ -102,7 +103,9 @@ void map_put(map_t *map, const char *key, void *data) {
     if (!find) {
 
         if (lastNull != NULL) {
+
             *lastNull = map_element_create(key, data);
+
         } else {
 
             if (map->size > 0) {
@@ -118,6 +121,8 @@ void map_put(map_t *map, const char *key, void *data) {
                     exit(EXIT_FAILURE);
                 }
             }
+
+            map->table[map->size] = map_element_create(key, data);
 
             map->size++;
         }

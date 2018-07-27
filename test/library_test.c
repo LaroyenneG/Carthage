@@ -15,7 +15,7 @@
 #include "../src/map.h"
 
 
-#define TAB_ADDR_LEN 30000
+#define TAB_ADDR_LEN 10000
 
 /*
  * Test all Library
@@ -571,7 +571,7 @@ int main(void) {
 
     CUNIT_ADD_TEST_FUNCTION(&test_scanner, "scanner");
 
-    CUNIT_ADD_TEST_FUNCTION(&test_time_out, "time out");
+    //  CUNIT_ADD_TEST_FUNCTION(&test_time_out, "time out");
 
     CUNIT_ADD_TEST_FUNCTION(&test_map, "map");
     CUNIT_ADD_TEST_FUNCTION(&test_map_with_threads, "map thread");
