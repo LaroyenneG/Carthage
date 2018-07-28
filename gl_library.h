@@ -139,7 +139,7 @@ void map_clear(map_t *map);
 
 void *map_random_get(map_t *map);
 
-unsigned long long int hashcode(const char *key);
+void map_compress(map_t *map);
 
 
 /*
@@ -248,7 +248,7 @@ int sscanner_cut(char *string, char a, char b);
 
 int sscanner_get(const char *string, char a, char b, char *result);
 
-int randint(int low, int high);
+long randint(long low, long high);
 
 bool randbool();
 

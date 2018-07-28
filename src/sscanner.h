@@ -17,8 +17,7 @@ extern int sscanner_cut(char *string, char a, char b);
 
 extern int sscanner_get(const char *string, char a, char b, char *result);
 
-
-extern int randint(int low, int high);
+extern long randint(long low, long high);
 
 extern bool randbool();
 

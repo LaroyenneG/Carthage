@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include "sscanner.h"
 
-int randint(int low, int high) {
+long randint(long low, long high) {
 
 
     static int first = 0;
@@ -23,21 +23,24 @@ int randint(int low, int high) {
 
     ++seed_count;
 
-    while (--seed_count > 0) rand();
+    while (--seed_count > 0) {
+        rand();
+    }
+
     double v = (double) rand();
+
     v *= (double) (high - low + 1);
     v /= (double) RAND_MAX;
     v += (double) low;
+
     return (int) v;
 }
 
 
 bool randbool() {
 
-    int n = randint(0, 10);
 
-
-    return n % 2 == 0;
+    return randint(0, 10) % 2 == 0;
 }
 
 

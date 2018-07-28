@@ -8,6 +8,7 @@
 #include <pthread.h>
 
 #include "map.h"
+#include "sscanner.h"
 
 #define DEFAULT_BLOCK_SIZE 10
 
@@ -283,7 +284,31 @@ void *map_random_get(map_t *map) {
 
     void *data = NULL;
 
+    size_t size = 0;
 
+    for (size_t i = 0; i < map->size; ++i) {
+        if (map->table[i] != NULL) {
+            size++;
+        }
+    }
+
+    if (size > 0) {
+
+        long rand = randint(0, size);
+
+        for (size_t i = 0; i < map->size; ++i) {
+
+            if (map->table[i] != NULL) {
+
+                if (rand == 0) {
+                    data = map->table[i];
+                    break;
+                }
+
+                rand--;
+            }
+        }
+    }
 
     pthread_mutex_unlock(&map->mutex);
 
