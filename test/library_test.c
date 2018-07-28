@@ -529,16 +529,23 @@ void test_map() {
     }
 
 
-    for (int j = 0; j < 10000000; ++j) {
+    for (int j = 0; j < 10000000; ++j) { // Not good
 
         void *elt = map_random_get(map);
+
+        ASSERT_NOT_NULL(elt);
+
+        bool okFind = false;
 
         for (int i = 0; i < TAB_ADDR_LEN; ++i) {
             if (elt == data[i]) {
                 checking[i] = true;
+                okFind = true;
                 break;
             }
         }
+
+        ASSERT_TRUE(okFind);
     }
 
     for (int l = 0; l < TAB_ADDR_LEN; ++l) {
