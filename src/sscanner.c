@@ -33,7 +33,7 @@ long randint(long low, long high) {
     v /= (double) RAND_MAX;
     v += (double) low;
 
-    return (int) v;
+    return (long) v;
 }
 
 

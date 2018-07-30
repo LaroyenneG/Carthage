@@ -189,10 +189,10 @@ void args_threads_free(args_threads_t *args_threads);
 
 typedef struct {
 
-    unsigned int capacityIncrement;
-    unsigned int elementCount;
-    unsigned int buffer;
-    size_t size;
+    size_t capacityIncrement;
+    size_t elementCount;
+    size_t buffer;
+
     void **elementData;
     pthread_mutex_t mutex;
 
@@ -213,25 +213,23 @@ bool vector_contains(vector_t *vector, void *pVoid);
 
 void *vector_element_at(vector_t *vector, unsigned int index);
 
-int vector_index_of(vector_t *vector, void *pVoid);
+size_t vector_index_of(vector_t *vector, void *pVoid, bool *status);
 
 void *vector_last_element(vector_t *vector);
 
-int vector_last_index_of(vector_t *vector, void *pVoid);
+size_t vector_last_index_of(vector_t *vector, void *data, bool *status);
 
 void vector_free(vector_t *vector);
 
-int vector_capacity(vector_t *vector);
+size_t vector_capacity(vector_t *vector);
 
 void vector_trim_to_size(vector_t *vector);
 
-void vector_ensure_capacity(vector_t *vector, unsigned int minCapacity);
+void vector_ensure_capacity(vector_t *vector, size_t minCapacity);
 
-void vector_free_all(vector_t *vector);
+size_t vector_size(vector_t *vector);
 
-int vector_size(vector_t *vector);
-
-int vector_remove_element(vector_t *vector, void *element);
+size_t vector_remove_element(vector_t *vector, void *data, bool *status);
 
 void vector_print(vector_t *vector, void (*print)(void *element));
 

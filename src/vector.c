@@ -1,5 +1,5 @@
 //
-// Created by guillaume on 02/01/18.
+// Created by Guillaume LAROYENNE on 02/01/18.
 //
 
 
@@ -8,6 +8,9 @@
 #include <pthread.h>
 
 #include "vector.h"
+
+
+static void vector_compress(vector_t *vector);
 
 
 vector_t *vector_create() {
@@ -20,17 +23,15 @@ vector_t *vector_create() {
 
     vector->buffer = 100;
 
-    vector->capacityIncrement = vector->buffer;
+    vector->capacity = vector->buffer;
 
-    vector->elementData = malloc(sizeof(void *) * vector->capacityIncrement);
-    if (vector->elementData == NULL) {
+    vector->elementsData = malloc(sizeof(void *) * vector->capacity);
+    if (vector->elementsData == NULL) {
         perror("malloc()");
         exit(EXIT_FAILURE);
     }
 
-    vector->elementCount = 0;
-
-    vector->size = 0;
+    vector->elementsCount = 0;
 
     pthread_mutex_init(&vector->mutex, NULL);
 
@@ -45,10 +46,10 @@ void *vector_first(vector_t *vector) {
 
     void *data;
 
-    if (vector->elementCount <= 0) {
+    if (vector->elementsCount <= 0) {
         data = NULL;
     } else {
-        data = vector->elementData[0];
+        data = vector->elementsData[0];
     }
 
     pthread_mutex_unlock(&vector->mutex);
@@ -57,36 +58,39 @@ void *vector_first(vector_t *vector) {
 }
 
 
-void vector_add_element(vector_t *vector, void *element) {
+void vector_add_element(vector_t *vector, void *data) {
 
     pthread_mutex_lock(&vector->mutex);
 
-    if (vector->capacityIncrement <= vector->elementCount) {
-        vector->capacityIncrement += vector->buffer;
-        vector->elementData = realloc(vector->elementData, sizeof(void *) * vector->capacityIncrement);
-        if (vector->elementData == NULL) {
+    if (vector->capacity <= vector->elementsCount) {
+
+        vector->capacity += vector->buffer;
+        vector->elementsData = realloc(vector->elementsData, sizeof(void *) * vector->capacity);
+
+        if (vector->elementsData == NULL) {
             perror("realloc()");
             exit(EXIT_FAILURE);
         }
     }
-    vector->elementData[vector->elementCount] = element;
-    vector->elementCount++;
+
+    vector->elementsData[vector->elementsCount] = data;
+    vector->elementsCount++;
 
     pthread_mutex_unlock(&vector->mutex);
 }
 
 
-bool vector_add(vector_t *vector, void *element) {
+bool vector_add(vector_t *vector, void *data) {
 
     pthread_mutex_lock(&vector->mutex);
 
     bool b;
 
-    if (vector->capacityIncrement <= vector->elementCount) {
+    if (vector->capacity <= vector->elementsCount) {
         b = false;
     } else {
-        vector->elementData[vector->elementCount] = element;
-        vector->elementCount++;
+        vector->elementsData[vector->elementsCount] = data;
+        vector->elementsCount++;
         b = true;
     }
 
@@ -100,28 +104,33 @@ void vector_clear(vector_t *vector) {
 
     pthread_mutex_lock(&vector->mutex);
 
-    vector->elementCount = 0;
-    free(vector->elementData);
-    vector->elementData = malloc(sizeof(void *) * vector->buffer);
-    if (vector->elementData == NULL) {
+    vector->elementsCount = 0;
+
+    if (vector->elementsData != NULL) {
+        free(vector->elementsData);
+    }
+
+    vector->elementsData = malloc(sizeof(void *) * vector->buffer);
+    if (vector->elementsData == NULL) {
         perror("malloc()");
         exit(EXIT_FAILURE);
     }
-    vector->capacityIncrement = vector->buffer;
+
+    vector->capacity = vector->buffer;
 
     pthread_mutex_unlock(&vector->mutex);
 }
 
 
-bool vector_contains(vector_t *vector, void *pVoid) {
+bool vector_contains(vector_t *vector, void *data) {
 
     pthread_mutex_lock(&vector->mutex);
 
     bool b = false;
 
-    for (int i = 0; i < vector->elementCount; i++) {
+    for (int i = 0; i < vector->elementsCount; i++) {
 
-        if (vector->elementData[i] == pVoid) {
+        if (vector->elementsData[i] == data) {
 
             b = true;
             break;
@@ -140,12 +149,13 @@ void *vector_element_at(vector_t *vector, unsigned int index) {
 
     void *data;
 
-    if (index >= vector->elementCount || index < 0) {
+    if (index >= vector->elementsCount || index < 0) {
 
         data = NULL;
+
     } else {
 
-        data = vector->elementData[index];
+        data = vector->elementsData[index];
     }
 
     pthread_mutex_unlock(&vector->mutex);
@@ -155,16 +165,17 @@ void *vector_element_at(vector_t *vector, unsigned int index) {
 }
 
 
-int vector_index_of(vector_t *vector, void *pVoid) {
+size_t vector_index_of(vector_t *vector, void *data, bool *status) {
 
     pthread_mutex_lock(&vector->mutex);
 
-    int index = -1;
+    size_t index = 0;
+    *status = false;
 
-    for (int i = 0; i < vector->elementCount; i++) {
+    for (size_t i = 0; i < vector->elementsCount; i++) {
 
-        if (vector->elementData[i] == pVoid) {
-
+        if (vector->elementsData[i] == data) {
+            *status = true;
             index = i;
             break;
         }
@@ -182,10 +193,10 @@ void *vector_last_element(vector_t *vector) {
 
     void *data;
 
-    if (vector->elementCount == 0) {
+    if (vector->elementsCount == 0) {
         data = NULL;
     } else {
-        data = vector->elementData[vector->elementCount - 1];
+        data = vector->elementsData[vector->elementsCount - 1];
     }
 
     pthread_mutex_unlock(&vector->mutex);
@@ -194,14 +205,17 @@ void *vector_last_element(vector_t *vector) {
 }
 
 
-int vector_last_index_of(vector_t *vector, void *pVoid) {
+size_t vector_last_index_of(vector_t *vector, void *data, bool *status) {
 
     pthread_mutex_lock(&vector->mutex);
 
-    int index = -1;
+    size_t index = 0;
+    *status = false;
 
-    for (int i = 0; i < vector->elementCount; i++) {
-        if (vector->elementData[i] == pVoid) {
+    for (size_t i = 0; i < vector->elementsCount; i++) {
+
+        if (vector->elementsData[i] == data) {
+            *status = true;
             index = i;
         }
     }
@@ -212,11 +226,11 @@ int vector_last_index_of(vector_t *vector, void *pVoid) {
 }
 
 
-int vector_capacity(vector_t *vector) {
+size_t vector_capacity(vector_t *vector) {
 
     pthread_mutex_lock(&vector->mutex);
 
-    int cap = vector->capacityIncrement - vector->elementCount;
+    size_t cap = vector->capacity - vector->elementsCount;
 
     pthread_mutex_unlock(&vector->mutex);
 
@@ -226,44 +240,38 @@ int vector_capacity(vector_t *vector) {
 
 void vector_trim_to_size(vector_t *vector) {
 
-    int m = vector_capacity(vector);
-
-    if (m < 0) {
-        return;
-    }
-
-    if (m == 0) {
-        return;
-    }
 
     pthread_mutex_lock(&vector->mutex);
 
-    vector->elementData = realloc(vector->elementData, sizeof(void *) * (vector->elementCount));
-    if (vector->elementData == NULL) {
-        perror("realloc()");
-        exit(EXIT_FAILURE);
-    }
+    if (vector->capacity - vector->elementsCount > 0) {
 
-    vector->capacityIncrement = vector->elementCount;
+        vector->elementsData = realloc(vector->elementsData, sizeof(void *) * (vector->elementsCount));
+        if (vector->elementsData == NULL) {
+            perror("realloc()");
+            exit(EXIT_FAILURE);
+        }
+
+        vector->capacity = vector->elementsCount;
+    }
 
     pthread_mutex_unlock(&vector->mutex);
 }
 
 
-void vector_ensure_capacity(vector_t *vector, unsigned int minCapacity) {
-
-    if (vector_capacity(vector) > minCapacity) {
-        return;
-    }
+void vector_ensure_capacity(vector_t *vector, size_t minCapacity) {
 
     pthread_mutex_lock(&vector->mutex);
 
-    vector->elementData = realloc(vector->elementData, sizeof(void *) * minCapacity);
-    if (vector->elementData == NULL) {
-        perror("realloc()");
-        exit(EXIT_FAILURE);
+    if (vector->capacity < minCapacity) {
+
+        vector->elementsData = realloc(vector->elementsData, sizeof(void *) * minCapacity);
+        if (vector->elementsData == NULL) {
+            perror("realloc()");
+            exit(EXIT_FAILURE);
+        }
+
+        vector->capacity = minCapacity;
     }
-    vector->capacityIncrement = minCapacity;
 
     pthread_mutex_unlock(&vector->mutex);
 }
@@ -278,38 +286,20 @@ void vector_free(vector_t *vector) {
 
     pthread_mutex_destroy(&vector->mutex);
 
-    free(vector->elementData);
-    vector->elementData = NULL;
+    if (vector->elementsData != NULL) {
+        free(vector->elementsData);
+        vector->elementsData = NULL;
+    }
+
     free(vector);
-
 }
 
 
-void vector_free_all(vector_t *vector) {
-
-
-    if (vector == NULL) {
-        return;
-    }
+size_t vector_size(vector_t *vector) {
 
     pthread_mutex_lock(&vector->mutex);
 
-    for (int e = 0; e < vector->elementCount; e++) {
-        free(vector->elementData[e]);
-        vector->elementData[e] = NULL;
-    }
-
-    pthread_mutex_unlock(&vector->mutex);
-
-    vector_free(vector);
-}
-
-
-int vector_size(vector_t *vector) {
-
-    pthread_mutex_lock(&vector->mutex);
-
-    int size = vector->elementCount;;
+    size_t size = vector->elementsCount;
 
     pthread_mutex_unlock(&vector->mutex);
 
@@ -317,29 +307,26 @@ int vector_size(vector_t *vector) {
 }
 
 
-int vector_remove_element(vector_t *vector, void *element) {
-
-    int index = -1;
+size_t vector_remove_element(vector_t *vector, void *data, bool *status) {
 
     pthread_mutex_lock(&vector->mutex);
 
-    for (int i = 0; i < vector->elementCount; ++i) {
+    size_t index = 0;
+    *status = false;
 
-        if (vector->elementData[i] == element) {
-            vector->elementData[i] = NULL;
+    for (size_t i = 0; i < vector->elementsCount; ++i) {
+
+        if (vector->elementsData[i] == data) {
+            vector->elementsData[i] = NULL;
             index = i;
+            *status = true;
             break;
         }
     }
 
+    vector->elementsCount--;
 
-    for (int j = index; j < vector->elementCount - 1; ++j) {
-
-        vector->elementData[j] = vector->elementData[j + 1];
-        vector->elementData[j + 1] = NULL;
-    }
-
-    vector->elementCount--;
+    vector_compress(vector);
 
     pthread_mutex_unlock(&vector->mutex);
 
@@ -347,10 +334,31 @@ int vector_remove_element(vector_t *vector, void *element) {
 }
 
 
+void vector_compress(vector_t *vector) {
+
+    bool compress;
+
+    do {
+
+        compress = false;
+
+        for (size_t i = 0; i < vector->capacity - 1; ++i) {
+
+            if (vector->elementsData[i] == NULL && vector->elementsData[i + 1] != NULL) {
+
+                vector->elementsData[i] = vector->elementsData[i + 1];
+                vector->elementsData[i + 1] = NULL;
+                compress = true;
+            }
+        }
+
+    } while (compress);
+}
+
+
 void vector_print(vector_t *vector, void (*print)(void *element)) {
 
-    for (int i = 0; i < vector->elementCount; ++i) {
-        print(vector->elementData[i]);
+    for (int i = 0; i < vector->elementsCount; ++i) {
+        print(vector->elementsData[i]);
     }
-
 }

@@ -231,25 +231,28 @@ void test_vector() {
 
     vector->buffer = 10;
 
-    for (unsigned int i = 0; i < 1000; i++) {
-        int *e = malloc(sizeof(int));
-        *e = i;
-        vector_add_element(vector, e);
-        ASSERT_EQUALS(e, vector_element_at(vector, i), NULL);
-        ASSERT_TRUE(vector_contains(vector, e));
+    int pInt[TAB_ADDR_LEN];
+
+    for (unsigned int i = 0; i < TAB_ADDR_LEN; i++) {
+
+        pInt[i] = i;
+
+        vector_add_element(vector, &pInt[i]);
+        ASSERT_EQUALS(&pInt[i], vector_element_at(vector, i), NULL);
+        ASSERT_TRUE(vector_contains(vector, &pInt[i]));
     }
 
     int *q = 0;
 
     ASSERT_FALSE(vector_contains(vector, q));
 
-    ASSERT_EQUALS_INTEGER(1000, vector->elementCount);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN, vector_size(vector));
 
     int *f = vector_element_at(vector, 10);
 
     ASSERT_EQUALS_INTEGER(10, *f);
 
-    int rest = vector->capacityIncrement - vector->elementCount;
+    size_t rest = vector->capacity - vector->elementsCount;
     for (int a = 0; a <= rest; a++) {
         vector_add(vector, &a);
     }
@@ -264,23 +267,29 @@ void test_vector() {
 
     ASSERT_EQUALS_INTEGER(g, *((int *) vector_last_element(vector)));
 
-    ASSERT_EQUALS_INTEGER(1000, vector_index_of(vector, &g));
-    ASSERT_EQUALS_INTEGER(1001, vector->elementCount);
+    bool status;
+
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN, vector_index_of(vector, &g, &status));
+    ASSERT_TRUE(status);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN + 1, vector_size(vector));
 
     vector_add_element(vector, &g);
-    ASSERT_EQUALS_INTEGER(1001, vector_last_index_of(vector, &g));
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN + 1, vector_last_index_of(vector, &g, &status));
+    ASSERT_TRUE(status);
 
-    vector_ensure_capacity(vector, 100001);
-    ASSERT_EQUALS_INTEGER(100001, vector->capacityIncrement);
+
+    vector_ensure_capacity(vector, TAB_ADDR_LEN * 2);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN * 2, vector_size(vector) + vector_capacity(vector));
 
     vector_trim_to_size(vector);
-    ASSERT_EQUALS_INTEGER(1002, vector->elementCount);
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN + 2, vector_size(vector));
 
     vector_clear(vector);
-    ASSERT_EQUALS_INTEGER(vector->capacityIncrement, vector->buffer);
+    ASSERT_EQUALS_INTEGER(vector->capacity, vector->buffer);
 
+    ASSERT_EQUALS_INTEGER(0, vector_size(vector));
 
-    vector_free_all(vector);
+    vector_free(vector);
 }
 
 void test_vector_with_threads() {
@@ -300,17 +309,21 @@ void test_vector_with_threads() {
         vector_add_element(globalVector, &address[i]);
     }
 
+    bool status;
+
     for (int j = 0; j < 10; ++j) {
-        vector_remove_element(globalVector, &address[j]);
+        vector_remove_element(globalVector, &address[j], &status);
+        ASSERT_TRUE(status);
     }
+
 
 
     pthread_join(thread, NULL);
 
     ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN * 2 - 10, vector_size(globalVector));
 
-    for (int k = 0; k < globalVector->elementCount; ++k) {
-        ASSERT_NOT_NULL(globalVector->elementData[k]);
+    for (int k = 0; k < globalVector->elementsCount; ++k) {
+        ASSERT_NOT_NULL(globalVector->elementsData[k]);
     }
 
     vector_free(globalVector);
@@ -539,25 +552,28 @@ void test_map() {
 
     ASSERT_EQUALS_INTEGER(1, map_size(map));
 
-    void *data[TAB_ADDR_LEN];
+    ASSERT_NOT_NULL(map_remove(map, "bbb"));
 
+    char address[TAB_ADDR_LEN];
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
+
         char string[100];
         sprintf(string, "%d", i);
-        map_put(map, string, &data[i]);
+        map_put(map, string, &address[i]);
     }
 
 
-    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN + 1, map_size(map));
+    ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN, map_size(map));
 
     ASSERT_FALSE(map_contains_key(map, ",rgerkig"));
     ASSERT_TRUE(map_contains_key(map, "1"));
     ASSERT_TRUE(map_contains_key(map, "2"));
 
-    ASSERT_EQUALS(&data[1], map_get(map, "2"), NULL);
+    ASSERT_EQUALS(&address[2], map_get(map, "2"), NULL);
     ASSERT_NULL(map_get(map, "bbb"));
     ASSERT_NULL(map_get(map, "babylouba"));
+
 
     bool checking[TAB_ADDR_LEN];
     for (int k = 0; k < TAB_ADDR_LEN; ++k) {
@@ -579,7 +595,7 @@ void test_map() {
 
         for (int i = 0; i < TAB_ADDR_LEN; ++i) {
 
-            if (elt == data[i]) {
+            if (elt == &address[i]) {
                 checking[i] = true;
                 okFind = true;
                 break;
@@ -587,11 +603,12 @@ void test_map() {
         }
 
 
+        ASSERT_TRUE(okFind);
+
         for (int j = 0; j < TAB_ADDR_LEN; ++j) {
             stop &= checking[j];
         }
 
-        ASSERT_TRUE(okFind);
     }
 
     for (int l = 0; l < TAB_ADDR_LEN; ++l) {
@@ -605,7 +622,7 @@ void test_map() {
         map_remove(map, string);
     }
 
-    ASSERT_EQUALS_INTEGER(1, map_size(map));
+    ASSERT_EQUALS_INTEGER(0, map_size(map));
 
     map_free(map);
 }

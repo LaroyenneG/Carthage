@@ -287,6 +287,7 @@ void *map_random_get(map_t *map) {
     size_t size = 0;
 
     for (size_t i = 0; i < map->size; ++i) {
+
         if (map->table[i] != NULL) {
             size++;
         }
@@ -294,18 +295,18 @@ void *map_random_get(map_t *map) {
 
     if (size > 0) {
 
-        long rand = randint(0, size);
+        unsigned long rand = (unsigned long) randint(1, size);
 
         for (size_t i = 0; i < map->size; ++i) {
 
             if (map->table[i] != NULL) {
 
-                if (rand == 0) {
-                    data = map->table[i];
+                rand--;
+
+                if (rand <= 0) {
+                    data = map->table[i]->data;
                     break;
                 }
-
-                rand--;
             }
         }
     }
