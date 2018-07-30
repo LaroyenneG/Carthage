@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct vector_s {
+typedef struct {
 
     unsigned int capacityIncrement;
     unsigned int elementCount;

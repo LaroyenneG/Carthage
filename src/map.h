@@ -6,6 +6,7 @@
 #define LIBRARY_MAP_H
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 
 typedef struct {

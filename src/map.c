@@ -7,8 +7,8 @@
 #include <string.h>
 #include <pthread.h>
 
-#include "map.h"
 #include "sscanner.h"
+#include "map.h"
 
 #define DEFAULT_BLOCK_SIZE 10
 
@@ -320,6 +320,23 @@ void map_compress(map_t *map) {
 
     pthread_mutex_lock(&map->mutex);
 
+    bool compress;
+
+    do {
+
+        compress = false;
+
+        for (size_t i = 0; i < map->size - 1; ++i) {
+
+            if (map->table[i] == NULL && map->table[i + 1] != NULL) {
+
+                compress = true;
+                map->table[i] = map->table[i + 1];
+                map->table[i + 1] = NULL;
+            }
+        }
+
+    } while (compress);
 
     pthread_mutex_unlock(&map->mutex);
 }

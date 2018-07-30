@@ -2,8 +2,8 @@
 // Created by Guillaume LAROYENNE on 21/02/18.
 //
 
-#ifndef GL_LIBRARY_GL_LIBRARY_H
-#define GL_LIBRARY_GL_LIBRARY_H
+#ifndef GL_LIBRARY_H
+#define GL_LIBRARY_H
 
 
 #include <stdio.h>
@@ -30,7 +30,7 @@ void debug_disable();
  * Fifo
  */
 
-typedef struct fifo_s {
+typedef struct {
 
     struct fifo_element_s *root;
     size_t size;
@@ -187,7 +187,7 @@ void args_threads_free(args_threads_t *args_threads);
  * Vector
  */
 
-typedef struct vector_s {
+typedef struct {
 
     unsigned int capacityIncrement;
     unsigned int elementCount;
@@ -256,4 +256,4 @@ bool randbool();
 }
 #endif
 
-#endif //GL_LIBRARY_GL_LIBRARY_H
+#endif //GL_LIBRARY_H

@@ -6,13 +6,14 @@
 #include <stdlib.h>
 #include <zconf.h>
 
-#include "cunit.h"
 #include "../src/fifo.h"
 #include "../src/list.h"
 #include "../src/vector.h"
-#include "../src/thread_lib.h"
-#include "../src/sscanner.h"
 #include "../src/map.h"
+#include "../src/sscanner.h"
+#include "../src/thread_lib.h"
+
+#include "../test/cunit.h"
 
 
 #define TAB_ADDR_LEN 10000
@@ -26,6 +27,10 @@ list_t *globalList;
 vector_t *globalVector;
 map_t *globalMap;
 
+
+/*******************************************************************************
+ * Test fifo
+ */
 
 void test_fifo() {
 
@@ -102,6 +107,10 @@ void test_fifo_with_threads() {
     fifo_free(globalFifo);
 }
 
+
+/*******************************************************************************
+ * Test list
+ */
 
 void test_list() {
 
@@ -198,6 +207,10 @@ void test_list_with_threads() {
     list_free(globalList);
 }
 
+
+/*******************************************************************************
+ * Test vector
+ */
 
 void *test_vector_thread(void *pVoid) {
 
@@ -300,6 +313,11 @@ void test_vector_with_threads() {
 
     vector_free(globalVector);
 }
+
+
+/*******************************************************************************
+ * Test timeout
+ */
 
 
 static bool b;
@@ -418,7 +436,7 @@ void test_scanner() {
 }
 
 
-/*
+/*******************************************************************************
  * Map
  */
 
@@ -497,7 +515,7 @@ void test_map() {
 
     ASSERT_EQUALS_INTEGER(0, map_size(map));
 
-    for (int i = 0; i < 3; ++i) {
+    for (long i = 0; i < 3; ++i) {
         map_put(map, "bbb", (void *) i);
     }
 
@@ -529,7 +547,11 @@ void test_map() {
     }
 
 
-    for (int j = 0; j < 10000000; ++j) { // Not good
+    bool stop = false;
+
+    while (!stop) {
+
+        stop = true;
 
         void *elt = map_random_get(map);
 
@@ -538,11 +560,17 @@ void test_map() {
         bool okFind = false;
 
         for (int i = 0; i < TAB_ADDR_LEN; ++i) {
+
             if (elt == data[i]) {
                 checking[i] = true;
                 okFind = true;
                 break;
             }
+        }
+
+
+        for (int j = 0; j < TAB_ADDR_LEN; ++j) {
+            stop &= checking[j];
         }
 
         ASSERT_TRUE(okFind);
@@ -578,7 +606,7 @@ int main(void) {
 
     CUNIT_ADD_TEST_FUNCTION(&test_scanner, "scanner");
 
-    //  CUNIT_ADD_TEST_FUNCTION(&test_time_out, "time out");
+    // CUNIT_ADD_TEST_FUNCTION(&test_time_out, "time out");
 
     CUNIT_ADD_TEST_FUNCTION(&test_map, "map");
     CUNIT_ADD_TEST_FUNCTION(&test_map_with_threads, "map thread");
