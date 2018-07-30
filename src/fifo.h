@@ -9,13 +9,6 @@
 #include <stdbool.h>
 
 
-struct fifo_element_s {
-
-    void *address;
-    struct fifo_element_s *next;
-
-};
-
 typedef struct fifo_s {
 
     struct fifo_element_s *root;
@@ -31,11 +24,11 @@ extern void fifo_free(fifo_t *fifo);
 
 extern bool fifo_is_empty(fifo_t *fifo);
 
-extern void fifo_append(fifo_t *fifo, const void *pVoid);
+extern void fifo_append(fifo_t *fifo, void *data);
 
 extern void *fifo_remove(fifo_t *fifo);
 
-extern int fifo_size(fifo_t *fifo);
+extern size_t fifo_size(fifo_t *fifo);
 
 
 #endif //LIB_FIFO_H

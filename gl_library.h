@@ -45,11 +45,11 @@ void fifo_free(fifo_t *fifo);
 
 bool fifo_is_empty(fifo_t *fifo);
 
-void fifo_append(fifo_t *fifo, const void *pVoid);
+void fifo_append(fifo_t *fifo, void *pVoid);
 
 void *fifo_remove(fifo_t *fifo);
 
-int fifo_size(fifo_t *fifo);
+size_t fifo_size(fifo_t *fifo);
 
 
 /*

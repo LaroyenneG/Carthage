@@ -45,7 +45,7 @@ void test_fifo() {
         ASSERT_EQUALS_INTEGER(i + 1, fifo_size(fifo));
     }
 
-    int size = fifo_size(fifo);
+    size_t size = fifo_size(fifo);
 
     for (int j = 0; j < TAB_ADDR_LEN; ++j) {
 
@@ -57,6 +57,8 @@ void test_fifo() {
         ASSERT_EQUALS_INTEGER(size, fifo_size(fifo));
     }
 
+
+    ASSERT_TRUE(fifo_is_empty(fifo));
 
     fifo_free(fifo);
 }

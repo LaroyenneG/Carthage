@@ -8,8 +8,16 @@
 
 #include "fifo.h"
 
+struct fifo_element_s {
+
+    void *data;
+    struct fifo_element_s *next;
+
+};
+
 
 fifo_t *fifo_create() {
+
     fifo_t *fifo = malloc(sizeof(fifo_t));
     if (fifo == NULL) {
         perror("malloc()");
@@ -22,9 +30,9 @@ fifo_t *fifo_create() {
     fifo->size = 0;
     fifo->root = NULL;
 
-
     return fifo;
 }
+
 
 void fifo_free(fifo_t *fifo) {
 
@@ -40,6 +48,7 @@ void fifo_free(fifo_t *fifo) {
 
     free(fifo);
 }
+
 
 bool fifo_is_empty(fifo_t *fifo) {
 
@@ -57,7 +66,8 @@ bool fifo_is_empty(fifo_t *fifo) {
     return false;
 }
 
-void fifo_append(fifo_t *fifo, const void *pVoid) {
+
+void fifo_append(fifo_t *fifo, void *data) {
 
     struct fifo_element_s *elm = malloc(sizeof(struct fifo_element_s));
     if (elm == NULL) {
@@ -65,18 +75,23 @@ void fifo_append(fifo_t *fifo, const void *pVoid) {
         exit(EXIT_FAILURE);
     }
 
-    elm->address = (void *) pVoid;
+    elm->data = data;
     elm->next = NULL;
 
     pthread_mutex_lock(&fifo->mutex);
 
     if (fifo->root == NULL) {
+
         fifo->root = elm;
+
     } else {
+
         struct fifo_element_s *select = fifo->root;
+
         while (select->next != NULL) {
             select = select->next;
         }
+
         select->next = elm;
     }
 
@@ -85,35 +100,37 @@ void fifo_append(fifo_t *fifo, const void *pVoid) {
     pthread_mutex_unlock(&fifo->mutex);
 }
 
+
 void *fifo_remove(fifo_t *fifo) {
 
-    if (fifo_is_empty(fifo)) {
-        return NULL;
-    }
+    void *data = NULL;
 
     pthread_mutex_lock(&fifo->mutex);
 
-    void *pVoid = fifo->root->address;
+    if (fifo->size > 0) {
 
-    struct fifo_element_s *tmp = fifo->root->next;
+        data = fifo->root->data;
 
-    free(fifo->root);
+        struct fifo_element_s *tmp = fifo->root->next;
 
-    fifo->root = tmp;
+        free(fifo->root);
 
-    fifo->size--;
+        fifo->root = tmp;
+
+        fifo->size--;
+    }
 
     pthread_mutex_unlock(&fifo->mutex);
 
-    return pVoid;
+    return data;
 }
 
 
-int fifo_size(fifo_t *fifo) {
+size_t fifo_size(fifo_t *fifo) {
 
     pthread_mutex_lock(&fifo->mutex);
 
-    int size = (int) fifo->size;
+    size_t size = fifo->size;
 
     pthread_mutex_unlock(&fifo->mutex);
 
