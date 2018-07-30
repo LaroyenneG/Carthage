@@ -6,9 +6,12 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <zconf.h>
+
 #include "thread_lib.h"
 #include "log.h"
 
+
+static void *thread_time_out(void *args);
 
 args_threads_t *args_threads_create(size_t n) {
 
@@ -49,9 +52,8 @@ void *thread_time_out(void *args) {
         print_anomaly_master("invalid argument in thread_time_out()");
     }
 
-    unsigned int time = *(unsigned int *) args_threads->argv[0];
-    pthread_t pthread = *(pthread_t *) args_threads->argv[1];
-
+    unsigned int time = *((unsigned int *) args_threads->argv[0]);
+    pthread_t pthread = *((pthread_t *) args_threads->argv[1]);
 
     sleep(time);
 
@@ -60,6 +62,7 @@ void *thread_time_out(void *args) {
 
     free(args_threads->argv[0]);
     free(args_threads->argv[1]);
+
     args_threads_free(args);
 
     pthread_exit(NULL);
@@ -86,17 +89,8 @@ int time_out(pthread_t thread, unsigned int time, bool wait) {
 
     args_threads_t *args_threads = args_threads_create(2);
 
-    /*
-    pthread_t *t = malloc(sizeof(pthread_t));
-    if (t == NULL) {
-        perror("malloc()");
-        exit(EXIT_FAILURE);
-    }
-     */
-
     args_threads->argv[0] = pTime;
     args_threads->argv[1] = pthread;
-    // args_threads->argv[2] = t;
 
 
     pthread_t t;

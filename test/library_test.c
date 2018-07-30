@@ -320,14 +320,14 @@ void test_vector_with_threads() {
  */
 
 
-static bool b;
+static bool time_out_b;
 
 
 void *thread_test_time_out(void *args) {
 
     sleep(5);
 
-    b = true;
+    time_out_b = true;
 
     pthread_exit(NULL);
 }
@@ -336,10 +336,10 @@ void *thread_test_time_out(void *args) {
 void test_time_out() {
 
     /*
-     * test sans wait
+     * test sans wait 2 s max
      */
 
-    b = false;
+    time_out_b = false;
 
     pthread_t pthread;
 
@@ -350,11 +350,14 @@ void test_time_out() {
 
     time_out(pthread, 1, false);
 
-    pthread_join(pthread, NULL);
+    sleep(2);
+
+    ASSERT_FALSE(time_out_b);
+
 
     pthread_t pthread2;
 
-    b = false;
+    time_out_b = false;
 
     if (pthread_create(&pthread2, NULL, thread_test_time_out, NULL)) {
         perror("pthread_create()");
@@ -365,7 +368,7 @@ void test_time_out() {
 
     pthread_join(pthread2, NULL);
 
-    ASSERT_TRUE(b);
+    ASSERT_TRUE(time_out_b);
 
     sleep(15);
 
@@ -373,7 +376,7 @@ void test_time_out() {
      * test avec wait
      */
 
-    b = false;
+    time_out_b = false;
 
     pthread_t pthread3;
     if (pthread_create(&pthread3, NULL, thread_test_time_out, NULL)) {
@@ -381,9 +384,22 @@ void test_time_out() {
         exit(EXIT_FAILURE);
     }
 
-    time_out(pthread, 10, true);
+    time_out(pthread3, 10, true);
 
-    ASSERT_TRUE(b);
+    ASSERT_TRUE(time_out_b);
+
+
+    time_out_b = false;
+
+    pthread_t pthread4;
+    if (pthread_create(&pthread4, NULL, thread_test_time_out, NULL)) {
+        perror("pthread_create()");
+        exit(EXIT_FAILURE);
+    }
+
+    time_out(pthread4, 2, true);
+
+    ASSERT_FALSE(time_out_b);
 
 }
 
@@ -595,6 +611,7 @@ void test_map() {
 
 int main(void) {
 
+
     CUNIT_ADD_TEST_FUNCTION(&test_fifo, "fifo");
     CUNIT_ADD_TEST_FUNCTION(&test_fifo_with_threads, "fifo thread");
 
@@ -606,10 +623,10 @@ int main(void) {
 
     CUNIT_ADD_TEST_FUNCTION(&test_scanner, "scanner");
 
-    // CUNIT_ADD_TEST_FUNCTION(&test_time_out, "time out");
-
     CUNIT_ADD_TEST_FUNCTION(&test_map, "map");
     CUNIT_ADD_TEST_FUNCTION(&test_map_with_threads, "map thread");
+
+    CUNIT_ADD_TEST_FUNCTION(&test_time_out, "time out");
 
     CUNIT_RUN();
 
