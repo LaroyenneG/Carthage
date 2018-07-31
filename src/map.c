@@ -251,6 +251,7 @@ bool map_contains_key(map_t *map, const char *key) {
     return contains;
 }
 
+
 void map_clear(map_t *map) {
 
     if (map == NULL) {
@@ -340,4 +341,32 @@ void map_compress(map_t *map) {
     } while (compress);
 
     pthread_mutex_unlock(&map->mutex);
+}
+
+
+void *map_remove_elt(map_t *map, void *data) {
+
+    pthread_mutex_lock(&map->mutex);
+
+    struct map_element_s **select = NULL;
+
+    for (size_t i = 0; i < map->size; i++) {
+
+        if (map->table[i] != NULL && map->table[i]->data == data) {
+            select = &map->table[i];
+            break;
+        }
+    }
+
+    if (select != NULL) {
+        data = (*select)->data;
+        free(*select);
+        *select = NULL;
+    } else {
+        data = NULL;
+    }
+
+    pthread_mutex_unlock(&map->mutex);
+
+    return data;
 }

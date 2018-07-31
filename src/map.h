@@ -36,6 +36,8 @@ extern void map_clear(map_t *map);
 
 extern void *map_random_get(map_t *map);
 
+extern void *map_remove_elt(map_t *map, void *data);
+
 extern void map_compress(map_t *map);
 
 #endif //LIBRARY_MAP_H
