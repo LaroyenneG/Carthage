@@ -40,4 +40,6 @@ extern void *map_remove_elt(map_t *map, void *data);
 
 extern void map_compress(map_t *map);
 
+extern void * map_find(map_t *map, bool (*function)(void *, void *), void *elt);
+
 #endif //LIBRARY_MAP_H

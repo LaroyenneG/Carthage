@@ -370,3 +370,30 @@ void *map_remove_elt(map_t *map, void *data) {
 
     return data;
 }
+
+
+void *map_find(map_t *map, bool (*function)(void *, void *), void *elt) {
+
+    pthread_mutex_lock(&map->mutex);
+
+    void *data = NULL;
+
+
+    struct map_element_s **select = NULL;
+
+    for (size_t i = 0; i < map->size; i++) {
+
+        if (map->table[i] != NULL && function(map->table[i], elt)) {
+            select = &map->table[i];
+            break;
+        }
+    }
+
+    if (select != NULL) {
+        data = (*select)->data;
+    }
+
+    pthread_mutex_unlock(&map->mutex);
+
+    return data;
+}

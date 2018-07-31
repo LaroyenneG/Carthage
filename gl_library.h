@@ -143,6 +143,9 @@ void *map_remove_elt(map_t *map, void *data);
 
 void map_compress(map_t *map);
 
+void *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
+
+
 
 /*
  * Sublime terminal
