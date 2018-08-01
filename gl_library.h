@@ -108,6 +108,8 @@ void enable_log();
 
 void disable_log();
 
+void print_log();
+
 /*
  * Map
  */

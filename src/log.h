@@ -26,4 +26,6 @@ extern void enable_log();
 
 extern void disable_log();
 
+extern void print_log();
+
 #endif //LIBRARY_LOG_H
