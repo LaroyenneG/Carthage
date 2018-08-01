@@ -9,7 +9,7 @@
 #include "log.h"
 
 static bool active_log = false;
-
+static const int LINE_SIZE_MAX = 10000;
 static char file[125000];
 
 
@@ -17,68 +17,68 @@ static void init_builder();
 
 void print_anomaly(const char *string) {
 
-    if (!active_log) {
+    if (!active_log || strlen(string) >= LINE_SIZE_MAX) {
         return;
     }
 
     init_builder();
 
-    sprintf(file, "[\e[0;31mANOMALY\e[0;m]\t%s\n", string);
+    sprintf(file + strlen(file), "[\e[0;31mANOMALY\e[0;m]\t%s\n", string);
 }
 
 
 void print_success(const char *string) {
 
-    if (!active_log) {
+    if (!active_log || strlen(string) >= LINE_SIZE_MAX) {
         return;
     }
 
     init_builder();
 
-    sprintf(file, "[\e[1;32m  OK  \e[0;m]\t%s\n", string);
+    sprintf(file + strlen(file), "[\e[1;32m  OK  \e[0;m]\t%s\n", string);
 }
 
 
 void print_warning(const char *string) {
 
-    if (!active_log) {
+    if (!active_log || strlen(string) >= LINE_SIZE_MAX) {
         return;
     }
 
     init_builder();
 
-    sprintf(file, "[\e[0;33mWARNING\e[0;m]\t%s\n", string);
+    sprintf(file + strlen(file), "[\e[0;33mWARNING\e[0;m]\t%s\n", string);
 }
 
 
 void print_failed(const char *string) {
 
-    if (!active_log) {
+    if (!active_log || strlen(string) >= LINE_SIZE_MAX) {
         return;
     }
 
     init_builder();
 
-    sprintf(file, "[\e[0;31mFAILED\e[0;m]\t%s\n", string);
+    sprintf(file + strlen(file), "[\e[0;31mFAILED\e[0;m]\t%s\n", string);
 }
 
 
 void print_message(const char *string) {
 
-    if (!active_log) {
+    if (!active_log || strlen(string) >= LINE_SIZE_MAX) {
         return;
     }
 
     init_builder();
 
-    sprintf(file, "[\e[1;36mMESSAGE\e[0;m]\t%s\n", string);
+    sprintf(file + strlen(file), "[\e[1;36mMESSAGE\e[0;m]\t%s\n", string);
 }
 
 
 void print_anomaly_master(const char *string) {
 
-    if (active_log) {
-        printf("\e[0;31m[MASTER ANOMALY]\t%s\e[0;m\n", string);
+    if (active_log || strlen(string) >= LINE_SIZE_MAX) {
+        sprintf(file + strlen(file), "\e[0;31m[MASTER ANOMALY]\t%s\e[0;m\n", string);
         print_log();
     }
 
@@ -102,7 +102,7 @@ void init_builder() {
         init = true;
     }
 
-    if (strlen(file) + 1 >= sizeof(file)) {
+    if (strlen(file) + LINE_SIZE_MAX >= sizeof(file)) {
         print_log();
     }
 }

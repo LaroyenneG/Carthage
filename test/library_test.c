@@ -14,6 +14,7 @@
 #include "../src/thread_lib.h"
 
 #include "../test/cunit.h"
+#include "../src/log.h"
 
 
 #define TAB_ADDR_LEN 10000
@@ -629,7 +630,6 @@ void test_map() {
 
 
 int main(void) {
-
 
     CUNIT_ADD_TEST_FUNCTION(&test_fifo, "fifo");
     CUNIT_ADD_TEST_FUNCTION(&test_fifo_with_threads, "fifo thread");
