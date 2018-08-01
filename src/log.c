@@ -63,6 +63,18 @@ void print_failed(const char *string) {
 }
 
 
+void print_error(const char *string) {
+
+    if (!active_log || strlen(string) >= LINE_SIZE_MAX) {
+        return;
+    }
+
+    init_builder();
+
+    sprintf(file + strlen(file), "[\e[0;31mERROR\e[0;m]\t%s\n", string);
+}
+
+
 void print_message(const char *string) {
 
     if (!active_log || strlen(string) >= LINE_SIZE_MAX) {

@@ -20,6 +20,8 @@ extern void print_failed(const char *string);
 
 extern void print_message(const char *string);
 
+extern void print_error(const char *string);
+
 extern void print_anomaly_master(const char *string);
 
 extern void enable_log();
