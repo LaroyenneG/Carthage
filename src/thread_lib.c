@@ -66,6 +66,7 @@ void *thread_time_out(void *args) {
     args_threads_free(args);
 
     pthread_exit(NULL);
+    return NULL;
 }
 
 

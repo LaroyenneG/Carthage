@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <tkPort.h>
+#include <string.h>
 
 #include "log.h"
 

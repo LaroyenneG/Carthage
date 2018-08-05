@@ -28,31 +28,55 @@ add_library(
         gl_library.h
 )
 
+if (WIN32)
+    add_executable(test_exec
+            src/debug.c
+            src/debug.h
+            src/fifo.c
+            src/fifo.h
+            src/list.c
+            src/list.h
+            src/log.c
+            src/log.h
+            src/map.c
+            src/map.h
+            src/sscanner.c
+            src/sscanner.h
+            src/sublime_term.c
+            src/sublime_term.h
+            src/thread_lib.c
+            src/thread_lib.h
+            src/vector.c
+            src/vector.h
+            gl_library.h
+            test/library_test_windows.c)
+endif ()
 
-add_executable(test_exec
-        src/debug.c
-        src/debug.h
-        src/fifo.c
-        src/fifo.h
-        src/list.c
-        src/list.h
-        src/log.c
-        src/log.h
-        src/map.c
-        src/map.h
-        src/sscanner.c
-        src/sscanner.h
-        src/sublime_term.c
-        src/sublime_term.h
-        src/thread_lib.c
-        src/thread_lib.h
-        src/vector.c
-        src/vector.h
-        gl_library.h
-        test/library_test.c
-        test/cunit.c
-        test/cunit.h
-        )
+if (LINUX)
+    add_executable(test_exec
+            src/debug.c
+            src/debug.h
+            src/fifo.c
+            src/fifo.h
+            src/list.c
+            src/list.h
+            src/log.c
+            src/log.h
+            src/map.c
+            src/map.h
+            src/sscanner.c
+            src/sscanner.h
+            src/sublime_term.c
+            src/sublime_term.h
+            src/thread_lib.c
+            src/thread_lib.h
+            src/vector.c
+            src/vector.h
+            gl_library.h
+            test/cunit.c
+            test/cunit.h
+            test/library_test_linux.c)
+endif ()
 
 
 target_link_libraries(gl_library pthread)
