@@ -5,8 +5,7 @@ set(CMAKE_C_STANDARD 99)
 add_definitions(-g -Wall -x c)
 
 
-add_library(
-        gl_library
+add_library(carthage
         src/debug.c
         src/debug.h
         src/fifo.c
@@ -25,7 +24,7 @@ add_library(
         src/thread_lib.h
         src/vector.c
         src/vector.h
-        gl_library.h
+        carthage.h
 )
 
 if (WIN32)
@@ -48,11 +47,12 @@ if (WIN32)
             src/thread_lib.h
             src/vector.c
             src/vector.h
-            gl_library.h
+            carthage.h
             test/library_test_windows.c)
+    message(STATUS "OS >>> WINDOWS")
 endif ()
 
-if (LINUX)
+if (UNIX)
     add_executable(test_exec
             src/debug.c
             src/debug.h
@@ -72,13 +72,14 @@ if (LINUX)
             src/thread_lib.h
             src/vector.c
             src/vector.h
-            gl_library.h
+            carthage.h
             test/cunit.c
             test/cunit.h
             test/library_test_linux.c)
+    message(STATUS "OS >>> UNIX")
 endif ()
 
 
-target_link_libraries(gl_library pthread)
+target_link_libraries(carthage pthread)
 target_link_libraries(test_exec pthread)
 
