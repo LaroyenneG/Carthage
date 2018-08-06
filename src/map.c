@@ -10,7 +10,6 @@
 #include "sscanner.h"
 #include "map.h"
 
-static struct map_element_s;
 
 static struct map_element_s *map_element_create(const char *key, void *data);
 

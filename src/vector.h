@@ -8,6 +8,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define BUFFER_SIZE 100;
+
 typedef struct {
 
     size_t capacity;

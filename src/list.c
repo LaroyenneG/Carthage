@@ -11,8 +11,6 @@
 #include "sscanner.h"
 
 
-static struct s_celt;
-
 static struct s_celt *celt_create(void *data);
 
 static struct s_celt *celt_prepend(struct s_celt *old, void *data);

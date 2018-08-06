@@ -9,8 +9,6 @@
 #include "fifo.h"
 
 
-static struct fifo_element_s;
-
 struct fifo_element_s {
     void *data;
     struct fifo_element_s *next;

@@ -2,8 +2,8 @@
 // Created by Guillaume LAROYENNE on 21/02/18.
 //
 
-#ifndef GL_LIBRARY_H
-#define GL_LIBRARY_H
+#ifndef CARTHAGE_H
+#define CARTHAGE_H
 
 
 #include <stdio.h>
@@ -16,9 +16,9 @@
 extern "C" {
 #endif
 
-/*
+/************************************************************************************
  * Debug
- */
+ ************************************************************************************/
 
 void debug_print(const char *string);
 
@@ -27,9 +27,9 @@ void debug_enable();
 void debug_disable();
 
 
-/*
+/************************************************************************************
  * Fifo
- */
+ ************************************************************************************/
 
 typedef struct {
 
@@ -53,9 +53,9 @@ void *fifo_remove(fifo_t *fifo);
 size_t fifo_size(fifo_t *fifo);
 
 
-/*
+/************************************************************************************
  * List
- */
+ ************************************************************************************/
 
 typedef struct {
 
@@ -89,9 +89,10 @@ void *list_search(list_t *list, void *data, bool (*function)(void *, void *));
 
 void list_add_if_not_found(list_t *list, void *data, bool (*function)(void *, void *));
 
-/*
+
+/************************************************************************************
  * Log
- */
+ ************************************************************************************/
 
 void print_anomaly(const char *string);
 
@@ -113,9 +114,10 @@ void disable_log();
 
 void print_log();
 
-/*
+
+/************************************************************************************
  * Map
- */
+ ************************************************************************************/
 
 typedef struct {
 
@@ -124,7 +126,6 @@ typedef struct {
     pthread_mutex_t mutex;
 
 } map_t;
-
 
 map_t *map_create();
 
@@ -151,10 +152,9 @@ void map_compress(map_t *map);
 void *map_find(map_t *map, bool (*function)(void *, void *), void *elt);
 
 
-
-/*
+/************************************************************************************
  * Sublime terminal
- */
+ ************************************************************************************/
 
 enum color {
     RED,
@@ -168,15 +168,14 @@ enum color {
     DEFAULT
 };
 
-
 void color_term(enum color c);
 
 void clear_term();
 
 
-/*
+/************************************************************************************
  * Thread lib
- */
+ ************************************************************************************/
 
 typedef struct {
 
@@ -185,7 +184,6 @@ typedef struct {
 
 } args_threads_t;
 
-
 args_threads_t *args_threads_create(size_t n);
 
 int time_out(pthread_t thread, unsigned int time, bool wait);
@@ -193,9 +191,9 @@ int time_out(pthread_t thread, unsigned int time, bool wait);
 void args_threads_free(args_threads_t *args_threads);
 
 
-/*
+/************************************************************************************
  * Vector
- */
+ ************************************************************************************/
 
 typedef struct {
 
@@ -244,9 +242,9 @@ size_t vector_remove_element(vector_t *vector, void *data, bool *status);
 void vector_print(vector_t *vector, void (*print)(void *element));
 
 
-/*
+/************************************************************************************
  * Scanner
- */
+ ************************************************************************************/
 
 bool sscanner_contains(const char *string, const char *substring);
 
@@ -264,4 +262,4 @@ bool randbool();
 }
 #endif
 
-#endif //GL_LIBRARY_H
+#endif //CARTHAGE_H

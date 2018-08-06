@@ -21,7 +21,7 @@ vector_t *vector_create() {
         exit(EXIT_FAILURE);
     }
 
-    vector->buffer = 100;
+    vector->buffer = BUFFER_SIZE;
 
     vector->capacity = vector->buffer;
 
