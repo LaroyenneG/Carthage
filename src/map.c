@@ -10,18 +10,16 @@
 #include "sscanner.h"
 #include "map.h"
 
-#define DEFAULT_BLOCK_SIZE 10
-
-
-struct map_element_s {
-
-    unsigned long long code;
-    void *data;
-};
+static struct map_element_s;
 
 static struct map_element_s *map_element_create(const char *key, void *data);
 
 static unsigned long long int hashcode(const char *key);
+
+struct map_element_s {
+    unsigned long long code;
+    void *data;
+};
 
 unsigned long long int hashcode(const char *key) {
 

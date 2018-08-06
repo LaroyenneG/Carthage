@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+
 #include "sscanner.h"
 
 long randint(long low, long high) {

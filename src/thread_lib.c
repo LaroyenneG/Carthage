@@ -100,13 +100,5 @@ int time_out(pthread_t thread, unsigned int time, bool wait) {
         exit(EXIT_FAILURE);
     }
 
-    int status = 0;
-
-    if (wait) {
-        status = pthread_join(t, NULL);
-    } else {
-        status = pthread_detach(t);
-    }
-
-    return status;
+    return wait ? pthread_join(t, NULL) : pthread_detach(t);
 }

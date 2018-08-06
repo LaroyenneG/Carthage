@@ -10,11 +10,9 @@
 
 
 typedef struct fifo_s {
-
     struct fifo_element_s *root;
     size_t size;
     pthread_mutex_t mutex;
-
 } fifo_t;
 
 

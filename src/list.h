@@ -19,7 +19,7 @@ typedef struct list_s {
 
 extern list_t *list_create();
 
-extern int list_size(list_t *list);
+extern size_t list_size(list_t *list);
 
 extern void list_free(list_t *list);
 

@@ -11,11 +11,7 @@
 #include "sscanner.h"
 
 
-struct s_celt {
-    struct s_celt *next;
-    void *data;
-};
-
+static struct s_celt;
 
 static struct s_celt *celt_create(void *data);
 
@@ -31,6 +27,10 @@ static size_t celt_length(struct s_celt *celt);
 
 static struct s_celt *celt_search(struct s_celt *celt, void *data, bool (*function)(void *, void *));
 
+struct s_celt {
+    struct s_celt *next;
+    void *data;
+};
 
 struct s_celt *celt_create(void *data) {
 
@@ -115,6 +115,7 @@ struct s_celt *celt_search(struct s_celt *celt, void *data, bool (*function)(voi
     return NULL;
 }
 
+
 list_t *list_create() {
 
     list_t *list = malloc(sizeof(list_t));
@@ -151,7 +152,7 @@ void *list_get(list_t *list, unsigned int i) {
 
     struct s_celt *celt = list->root;
 
-    int count = 0;
+    size_t count = 0;
     while (celt != NULL) {
 
         if (count == i) {
@@ -175,46 +176,37 @@ void *list_remove(list_t *list, unsigned int i) {
 
     pthread_mutex_lock(&list->mutex);
 
-    if (celt_length(list->root) == 0) {
+    void *data = NULL;
 
-        pthread_mutex_unlock(&list->mutex);
-        return NULL;
-    }
+    if (celt_length(list->root) > 0) {
 
-    void *data;
+        struct s_celt *celt = list->root;
+        struct s_celt *beforeCelt = list->root;
 
+        if (i == 0) {
+            data = list->root->data;
+            list->root = celt_remove_first(list->root);
+        } else {
 
-    struct s_celt *celt = list->root;
-    struct s_celt *beforeCelt = list->root;
+            size_t count = 0;
+            while (celt != NULL) {
 
-    if (i == 0) {
-
-        data = list->root->data;
-        list->root = celt_remove_first(list->root);
-
-        pthread_mutex_unlock(&list->mutex);
-        return data;
-    }
-
-    int count = 0;
-    while (celt != NULL) {
-
-        if (count == i) {
-
-            data = celt->data;
-            beforeCelt->next = celt_remove_first(celt);
-
-            pthread_mutex_unlock(&list->mutex);
-            return data;
+                if (count == i) {
+                    data = celt->data;
+                    beforeCelt->next = celt_remove_first(celt);
+                    celt = NULL;
+                } else {
+                    beforeCelt = celt;
+                    celt = celt->next;
+                    count++;
+                }
+            }
         }
-
-        beforeCelt = celt;
-        celt = celt->next;
-        count++;
     }
 
     pthread_mutex_unlock(&list->mutex);
-    return NULL;
+
+    return data;
 }
 
 void *list_remove_data(list_t *list, void *data) {
@@ -222,41 +214,32 @@ void *list_remove_data(list_t *list, void *data) {
 
     pthread_mutex_lock(&list->mutex);
 
-    if (celt_length(list->root) == 0) {
-        pthread_mutex_unlock(&list->mutex);
-        return NULL;
-    }
+    if (celt_length(list->root) > 0) {
 
+        struct s_celt *celt = list->root;
+        struct s_celt *beforeCelt = list->root;
 
-    struct s_celt *celt = list->root;
-    struct s_celt *beforeCelt = list->root;
+        if (list->root->data == data) {
+            data = list->root->data;
+            list->root = celt_remove_first(list->root);
+        } else {
+            while (celt != NULL) {
 
-    if (list->root->data == data) {
+                if (celt->data == data) {
 
-        data = list->root->data;
-        list->root = celt_remove_first(list->root);
-
-        pthread_mutex_unlock(&list->mutex);
-        return data;
-    }
-
-    while (celt != NULL) {
-
-        if (celt->data == data) {
-
-            data = celt->data;
-            beforeCelt->next = celt_remove_first(celt);
-
-            pthread_mutex_unlock(&list->mutex);
-            return data;
+                    data = celt->data;
+                    beforeCelt->next = celt_remove_first(celt);
+                    celt = NULL;
+                } else {
+                    beforeCelt = celt;
+                    celt = celt->next;
+                }
+            }
         }
-
-        beforeCelt = celt;
-        celt = celt->next;
     }
 
     pthread_mutex_unlock(&list->mutex);
-    return NULL;
+    return data;
 }
 
 
@@ -274,11 +257,11 @@ void list_free(list_t *list) {
 }
 
 
-int list_size(list_t *list) {
+size_t list_size(list_t *list) {
 
     pthread_mutex_lock(&list->mutex);
 
-    int size = (int) celt_length(list->root);
+    size_t size = celt_length(list->root);
 
     pthread_mutex_unlock(&list->mutex);
 
@@ -303,13 +286,12 @@ bool list_contains(list_t *list, void *data) {
 
     struct s_celt *celt = list->root;
 
-    while (celt != NULL) {
+    bool contains = false;
+
+    while (celt != NULL && !contains) {
 
         if (celt->data == data) {
-
-            pthread_mutex_unlock(&list->mutex);
-
-            return true;
+            contains = true;
         }
 
         celt = celt->next;
@@ -317,7 +299,7 @@ bool list_contains(list_t *list, void *data) {
 
     pthread_mutex_unlock(&list->mutex);
 
-    return false;
+    return contains;
 }
 
 void *list_random_get(list_t *list) {
@@ -325,25 +307,26 @@ void *list_random_get(list_t *list) {
     pthread_mutex_lock(&list->mutex);
 
 
-    int i = randint(0, (int) (celt_length(list->root) - 1));
-    int count = 0;
+    size_t i = (size_t) randint(0, (long) celt_length(list->root - 1));
+    size_t count = 0;
 
     struct s_celt *celt = list->root;
+
+    void *data = NULL;
 
     while (celt != NULL) {
 
         if (count == i) {
-
-            pthread_mutex_unlock(&list->mutex);
-            return celt->data;
+            data = celt->data;
+            celt = NULL;
+        } else {
+            celt = celt->next;
+            count++;
         }
-
-        celt = celt->next;
-        count++;
     }
 
     pthread_mutex_unlock(&list->mutex);
-    return NULL;
+    return data;
 }
 
 
@@ -355,11 +338,8 @@ void *list_search(list_t *list, void *data, bool (*function)(void *, void *)) {
     struct s_celt *celt = celt_search(list->root, data, function);
 
     pthread_mutex_unlock(&list->mutex);
-    if (celt == NULL) {
-        return NULL;
-    } else {
-        return celt->data;
-    }
+
+    return celt == NULL ? celt : celt->data;
 }
 
 

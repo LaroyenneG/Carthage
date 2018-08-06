@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 
 #ifdef __cplusplus
@@ -66,7 +67,7 @@ typedef struct {
 
 list_t *list_create();
 
-int list_size(list_t *list);
+size_t list_size(list_t *list);
 
 void list_free(list_t *list);
 
