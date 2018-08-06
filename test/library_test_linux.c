@@ -220,7 +220,7 @@ void *test_vector_thread(void *pVoid) {
     char address[TAB_ADDR_LEN];
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
-        vector_add_element(globalVector, &address[i]);
+        ASSERT_TRUE(vector_add_element(globalVector, &address[i]));
     }
 
     pthread_exit(NULL);
@@ -230,8 +230,6 @@ void test_vector() {
 
     vector_t *vector = vector_create();
 
-    vector->buffer = 10;
-
     int pInt[TAB_ADDR_LEN];
 
     for (unsigned int i = 0; i < TAB_ADDR_LEN; i++) {
@@ -239,7 +237,7 @@ void test_vector() {
         pInt[i] = i;
 
         vector_add_element(vector, &pInt[i]);
-        ASSERT_EQUALS(&pInt[i], vector_element_at(vector, i), NULL);
+        ASSERT_EQUALS(&pInt[i], vector_get(vector, i), NULL);
         ASSERT_TRUE(vector_contains(vector, &pInt[i]));
     }
 
@@ -249,17 +247,17 @@ void test_vector() {
 
     ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN, vector_size(vector));
 
-    int *f = vector_element_at(vector, 10);
+    int *f = vector_get(vector, 10);
 
     ASSERT_EQUALS_INTEGER(10, *f);
 
-    size_t rest = vector->capacity - vector->elementsCount;
+    size_t rest = vector->capacityIncrement - vector->elementCount;
     for (int a = 0; a <= rest; a++) {
-        vector_add(vector, &a);
+        vector_add(vector, 0, &a);
     }
 
 
-    ASSERT_FALSE(vector_add(vector, (void *) 15));
+    ASSERT_FALSE(vector_add_element(vector, (void *) 15));
 
     int g = 10269;
     vector_add_element(vector, &g);
@@ -286,7 +284,7 @@ void test_vector() {
     ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN + 2, vector_size(vector));
 
     vector_clear(vector);
-    ASSERT_EQUALS_INTEGER(vector->capacity, vector->buffer);
+    ASSERT_EQUALS_INTEGER(vector->capacityIncrement, VECTOR_BUFFER_SIZE);
 
     ASSERT_EQUALS_INTEGER(0, vector_size(vector));
 
@@ -296,6 +294,9 @@ void test_vector() {
 void test_vector_with_threads() {
 
     globalVector = vector_create();
+
+    vector_ensure_capacity(globalVector, TAB_ADDR_LEN * 3);
+
 
     pthread_t thread;
 
@@ -307,7 +308,7 @@ void test_vector_with_threads() {
     char address[TAB_ADDR_LEN];
 
     for (int i = 0; i < TAB_ADDR_LEN; ++i) {
-        vector_add_element(globalVector, &address[i]);
+        ASSERT_TRUE(vector_add_element(globalVector, &address[i]));
     }
 
     bool status;
@@ -318,13 +319,12 @@ void test_vector_with_threads() {
     }
 
 
-
     pthread_join(thread, NULL);
 
     ASSERT_EQUALS_INTEGER(TAB_ADDR_LEN * 2 - 10, vector_size(globalVector));
 
-    for (int k = 0; k < globalVector->elementsCount; ++k) {
-        ASSERT_NOT_NULL(globalVector->elementsData[k]);
+    for (int k = 0; k < globalVector->elementCount; ++k) {
+        ASSERT_NOT_NULL(globalVector->elementData[k]);
     }
 
     vector_free(globalVector);

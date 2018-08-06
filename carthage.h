@@ -199,7 +199,7 @@ typedef struct {
 
     size_t capacityIncrement;
     size_t elementCount;
-    size_t buffer;
+    size_t size;
 
     void **elementData;
     pthread_mutex_t mutex;
@@ -211,15 +211,15 @@ vector_t *vector_create();
 
 void *vector_first(vector_t *vector);
 
-void vector_add_element(vector_t *vector, void *element);
+bool vector_add_element(vector_t *vector, void *element);
 
-bool vector_add(vector_t *vector, void *element);
+void vector_add(vector_t *vector, size_t index, void *element);
 
 void vector_clear(vector_t *vector);
 
 bool vector_contains(vector_t *vector, void *pVoid);
 
-void *vector_element_at(vector_t *vector, unsigned int index);
+void *vector_get(vector_t *vector, unsigned int index);
 
 size_t vector_index_of(vector_t *vector, void *pVoid, bool *status);
 
